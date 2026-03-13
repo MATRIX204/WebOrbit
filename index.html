@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookMyEvent - Welcome</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Figtree -->
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Figtree', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #E3D1FF; /* Soft Glow Purple background */
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Professional neo-brutalism container */
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: #5B1FA6; /* Deep Purple */
+            border: 4px solid #000;
+            box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Main content card */
+        .content {
+            background-color: #FFFFFF;
+            border: 4px solid #000;
+            margin: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Logo container with purple gradient */
+        .logo-wrapper {
+            display: inline-block;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .logo-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border: 3px solid #000;
+            z-index: -1;
+        }
+
+        .logo {
+            width: 110px;
+            height: 110px;
+            background: linear-gradient(135deg, #7A2CCB, #9C4DFF);
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 6px 6px 0 #5B1FA6;
+        }
+
+        .logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 4.2rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 20px;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: -3px;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            color: #FFFFFF;
+            padding: 0 12px;
+            display: inline-block;
+            border: 3px solid #000;
+            transform: rotate(-1deg);
+            box-shadow: 5px 5px 0 #000;
+            font-weight: 900;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #2D2D2D;
+            margin-bottom: 40px;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+            letter-spacing: -0.2px;
+        }
+
+        /* Professional button group */
+        .button-group {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        /* Premium neo-brutalism buttons */
+        .btn {
+            padding: 18px 45px;
+            font-family: 'Figtree', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 4px solid #000;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #5B1FA6, #7A2CCB);
+            color: #FFFFFF;
+            box-shadow: 8px 8px 0 #9C4DFF;
+        }
+
+        .btn-primary:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0 #C58BFF;
+            background: linear-gradient(135deg, #7A2CCB, #9C4DFF);
+        }
+
+        .btn-outline {
+            background: #FFFFFF;
+            color: #5B1FA6;
+            box-shadow: 8px 8px 0 #C58BFF;
+            border: 4px solid #5B1FA6;
+        }
+
+        .btn-outline:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0 #E3D1FF;
+            background: #E3D1FF;
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+            color: inherit;
+        }
+
+        /* Stats section with professional look */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            border-top: 4px solid #000;
+            padding-top: 35px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            background: #FFFFFF;
+        }
+
+        .stat-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -25px;
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(to bottom, #5B1FA6, #C58BFF);
+            transform: rotate(15deg);
+        }
+
+        .stat-item:last-child::after {
+            display: none;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 5px;
+            letter-spacing: -2px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #2D2D2D;
+            background: #E3D1FF;
+            padding: 4px 12px;
+            border: 2px solid #000;
+            display: inline-block;
+        }
+
+        /* Professional accent elements */
+        .accent-line {
+            height: 8px;
+            width: 150px;
+            background: linear-gradient(90deg, #5B1FA6, #9C4DFF, #C58BFF);
+            margin: 20px auto;
+            border: 2px solid #000;
+        }
+
+        /* Corner accents */
+        .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 4px solid #000;
+            z-index: 20;
+        }
+
+        .corner-tl {
+            top: -4px;
+            left: -4px;
+            border-right: none;
+            border-bottom: none;
+            background: linear-gradient(135deg, #5B1FA6, #7A2CCB);
+        }
+
+        .corner-br {
+            bottom: -4px;
+            right: -4px;
+            border-left: none;
+            border-top: none;
+            background: linear-gradient(135deg, #9C4DFF, #C58BFF);
+        }
+
+        /* Background pattern */
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(91, 31, 166, 0.03) 0px,
+                rgba(91, 31, 166, 0.03) 10px,
+                rgba(197, 139, 255, 0.03) 10px,
+                rgba(197, 139, 255, 0.03) 20px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 700px) {
+            .content {
+                padding: 35px 25px;
+                margin: 15px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                letter-spacing: -2px;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                padding: 16px 35px;
+                font-size: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stats {
+                gap: 30px;
+            }
+
+            .stat-item::after {
+                right: -15px;
+                height: 30px;
+            }
+
+            .stat-number {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .stat-item::after {
+                display: none;
+            }
+
+            .logo {
+                width: 90px;
+                height: 90px;
+            }
+
+            .logo img {
+                width: 65px;
+                height: 65px;
+            }
+        }
+
+        /* Loading spinner animation */
+        .fa-spinner {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Fade in animation */
+        .content {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Corner accents -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-br"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="content">
+            <!-- Logo with purple gradient -->
+            
+
+            <!-- Headline -->
+            <h1>
+                WELCOME TO
+                <span class="highlight">BOOKMYEVENT</span>
+            </h1>
+
+            <!-- Tagline -->
+            <p class="tagline">
+                Discover and book premium events with confidence.<br>
+                Simple, secure, and professional.
+            </p>
+
+            <!-- Accent line -->
+            <div class="accent-line"></div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <a href="pages/home.html" class="btn btn-primary" id="browseEventsBtn">
+                    <i class="fas fa-calendar-check"></i>
+                    EXPLORE EVENTS
+                </a>
+                <a href="pages/login.html" class="btn btn-outline" id="loginBtn">
+                    <i class="fas fa-user-circle"></i>
+                    SIGN IN
+                </a>
+            </div>
+
+            <!-- Professional Stats -->
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">EVENTS</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50K+</span>
+                    <span class="stat-label">ATTENDEES</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100+</span>
+                    <span class="stat-label">CITIES</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Professional button interactions
+        
+
+        // Professional hover effect enhancement
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+        });
+
+        // Console welcome message (professional touch)
+        console.log('%c✨ BookMyEvent - Professional Events Platform', 
+                    'color: #5B1FA6; font-size: 14px; font-weight: bold;');
+        console.log('%c🎯 Purple Theme: Deep #5B1FA6 | Royal #7A2CCB | Vibrant #9C4DFF | Light #C58BFF', 
+                    'color: #7A2CCB; font-size: 12px;');
+
+        // Smooth entrance animation
+        window.addEventListener('load', () => {
+            document.querySelector('.content').style.opacity = '1';
+        });
+    </script>
+</body>
+</html>

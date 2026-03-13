@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>BookMyEvent - Sign In</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Figtree -->
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Figtree', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #E3D1FF;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Background pattern */
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(91, 31, 166, 0.03) 0px,
+                rgba(91, 31, 166, 0.03) 10px,
+                rgba(197, 139, 255, 0.03) 10px,
+                rgba(197, 139, 255, 0.03) 20px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background-color: #5B1FA6;
+            border: 4px solid #000;
+            box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Content card with image and form side by side */
+        .content {
+            background-color: #FFFFFF;
+            border: 4px solid #000;
+            margin: 20px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Left side - Image */
+        .login-image {
+            flex: 1;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border-right: 4px solid #000;
+            position: relative;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .login-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(91, 31, 166, 0.4), rgba(156, 77, 255, 0.4));
+            z-index: 2;
+        }
+
+        /* Right side - Login Form */
+        .login-form-section {
+            flex: 1;
+            padding: 40px 35px;
+            background: #FFFFFF;
+        }
+
+        /* Back button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #5B1FA6;
+            font-size: 1rem;
+            text-decoration: none;
+            border: 2px solid #000;
+            padding: 8px 12px;
+            background: #FFFFFF;
+            box-shadow: 3px 3px 0 #000;
+            transition: all 0.1s ease;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #000;
+        }
+
+        /* Logo */
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 15px;
+        }
+
+        .logo-text .book {
+            color: #5B1FA6;
+            background: #E3D1FF;
+            padding: 5px 8px;
+            border: 3px solid #000;
+            display: inline-block;
+        }
+
+        .logo-text .my {
+            color: #FFFFFF;
+            background: linear-gradient(135deg, #7A2CCB, #9C4DFF);
+            padding: 5px 8px;
+            border: 3px solid #000;
+            display: inline-block;
+            margin: 0 3px;
+        }
+
+        .logo-text .event {
+            color: #FFFFFF;
+            background: #5B1FA6;
+            padding: 5px 8px;
+            border: 3px solid #000;
+            display: inline-block;
+        }
+
+        /* Headline */
+        h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: #000;
+            letter-spacing: -1px;
+        }
+
+        .subhead {
+            color: #5B1FA6;
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #000;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            color: #5B1FA6;
+            font-size: 1.1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px 16px 45px;
+            font-family: 'Figtree', sans-serif;
+            font-size: 1rem;
+            border: 3px solid #000;
+            background: #FFFFFF;
+            box-shadow: 5px 5px 0 #E3D1FF;
+            transition: all 0.1s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            box-shadow: 2px 2px 0 #5B1FA6;
+            transform: translate(2px, 2px);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: #5B1FA6;
+            font-size: 1.1rem;
+        }
+
+        /* Forgot password */
+        .forgot-password {
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .forgot-password a {
+            color: #5B1FA6;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 2px solid #E3D1FF;
+        }
+
+        .forgot-password a:hover {
+            border-bottom-color: #5B1FA6;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-family: 'Figtree', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 4px solid #000;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #5B1FA6, #7A2CCB);
+            color: #FFFFFF;
+            box-shadow: 6px 6px 0 #9C4DFF;
+        }
+
+        .btn-primary:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 2px 2px 0 #C58BFF;
+        }
+
+        .btn-google {
+            background: #FFFFFF;
+            color: #5B1FA6;
+            box-shadow: 6px 6px 0 #C58BFF;
+            border: 4px solid #5B1FA6;
+        }
+
+        .btn-google:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 2px 2px 0 #E3D1FF;
+            background: #E3D1FF;
+        }
+
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Admin button */
+        .btn-admin {
+            background: #FFFFFF;
+            color: #FF0000;
+            box-shadow: 6px 6px 0 #FFA500;
+            border: 4px solid #FF0000;
+            margin-top: 5px;
+        }
+
+        .btn-admin:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 2px 2px 0 #FFA500;
+            background: #FFE5E5;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #5B1FA6, #9C4DFF, #C58BFF, transparent);
+        }
+
+        .divider-text {
+            font-weight: 700;
+            color: #5B1FA6;
+            background: #FFFFFF;
+            padding: 0 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Admin divider */
+        .divider-admin .divider-line {
+            background: linear-gradient(90deg, transparent, #FF0000, #FFA500, transparent);
+        }
+
+        .divider-admin .divider-text {
+            color: #FF0000;
+        }
+
+        /* Sign up link */
+        .signup-link {
+            margin-top: 20px;
+            font-weight: 500;
+            color: #2D2D2D;
+        }
+
+        .signup-link a {
+            color: #5B1FA6;
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 3px solid #E3D1FF;
+            margin-left: 5px;
+        }
+
+        .signup-link a:hover {
+            border-bottom-color: #5B1FA6;
+        }
+
+        /* Error message */
+        .error-message {
+            background: #FFE5E5;
+            border: 3px solid #FF0000;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: #FF0000;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message i {
+            font-size: 1rem;
+        }
+
+        /* Success message */
+        .success-message {
+            background: #E3FFE5;
+            border: 3px solid #00C851;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: #00C851;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-message i {
+            font-size: 1rem;
+        }
+
+        /* Admin hint */
+        .admin-hint {
+            background: #FFE5E5;
+            border: 2px solid #FF0000;
+            padding: 8px;
+            margin-bottom: 15px;
+            color: #FF0000;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .admin-hint i {
+            font-size: 0.9rem;
+        }
+
+        /* Corner accents */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #000;
+            z-index: 20;
+        }
+
+        .corner-tl {
+            top: -3px;
+            left: -3px;
+            border-right: none;
+            border-bottom: none;
+            background: linear-gradient(135deg, #5B1FA6, #7A2CCB);
+        }
+
+        .corner-br {
+            bottom: -3px;
+            right: -3px;
+            border-left: none;
+            border-top: none;
+            background: linear-gradient(135deg, #9C4DFF, #C58BFF);
+        }
+
+        /* Loading spinner */
+        .fa-spinner {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Fade in animation */
+        .content {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile responsive */
+        @media screen and (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+
+            .login-image {
+                min-height: 200px;
+                border-right: none;
+                border-bottom: 4px solid #000;
+            }
+
+            .login-form-section {
+                padding: 30px 25px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .login-form-section {
+                padding: 25px 15px;
+            }
+
+            .logo-text {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .form-input {
+                padding: 14px 15px 14px 40px;
+                font-size: 0.95rem;
+            }
+
+            .btn {
+                padding: 14px;
+                font-size: 1rem;
+            }
+
+            .back-btn {
+                font-size: 0.9rem;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Corner accents -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-br"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="content">
+            <!-- Left side - Image -->
+            <div class="login-image">
+                <img src="assets/images/login.png" alt="BookMyEvent" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22500%22 viewBox=%220 0 500 500%22><rect width=%22500%22 height=%22500%22 fill=%22%235B1FA6%22/><circle cx=%22250%22 cy=%22200%22 r=%2280%22 fill=%22%23E3D1FF%22/><circle cx=%22220%22 cy=%22180%22 r=%2210%22 fill=%22%23000%22/><circle cx=%22280%22 cy=%22180%22 r=%2210%22 fill=%22%23000%22/><path d=%22M200 240 Q250 280,300 240%22 stroke=%22%23000%22 stroke-width=%228%22 fill=%22none%22 stroke-linecap=%22round%22/><text x=%22250%22 y=%22350%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23FFFFFF%22 font-weight=%22bold%22>EVENTS</text></svg>'">
+                <div class="image-overlay"></div>
+            </div>
+
+            <!-- Right side - Login Form -->
+            <div class="login-form-section">
+                <!-- Back button -->
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> BACK
+                </a>
+
+                <!-- Headline -->
+                <h2>WELCOME BACK</h2>
+                <div class="subhead">YOUR EVENTS AWAIT</div>
+
+                <!-- Error message container -->
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText"></span>
+                </div>
+
+                <!-- Success message container -->
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successText"></span>
+                </div>
+
+                <!-- Admin hint container -->
+                <div class="admin-hint" id="adminHint">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="hintText"></span>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">EMAIL ADDRESS</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" class="form-input" id="email" placeholder="hello@bookmyevent.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">PASSWORD</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" class="form-input" id="password" placeholder="••••••••" required>
+                            <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                        </div>
+                        <div class="forgot-password">
+                            <a href="#" id="forgotPassword">FORGOT PASSWORD?</a>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> SIGN IN
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">OR</span>
+                    <div class="divider-line"></div>
+                </div>
+
+                <!-- Google Sign In -->
+                <button class="btn btn-google" id="googleSignIn">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    CONTINUE WITH GOOGLE
+                </button>
+
+                <!-- Admin Divider -->
+                <div class="divider divider-admin">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">ADMIN</span>
+                    <div class="divider-line"></div>
+                </div>
+
+                <!-- Admin Login Button -->
+                <button class="btn btn-admin" id="adminLoginBtn">
+                    <i class="fas fa-user-shield"></i> ADMIN LOGIN
+                </button>
+
+                <!-- Sign up link -->
+                <div class="signup-link">
+                    DON'T HAVE AN ACCOUNT? <a href="signup.html">CREATE ACCOUNT</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            sendPasswordResetEmail,
+            fetchSignInMethodsForEmail
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBc5PBzQQk-W1NDy5-DQ217QbvYsahtiOs",
+            authDomain: "bookmyevent-21cd8.firebaseapp.com",
+            projectId: "bookmyevent-21cd8",
+            storageBucket: "bookmyevent-21cd8.firebasestorage.app",
+            messagingSenderId: "535972128829",
+            appId: "1:535972128829:web:d07360b589ad13a8dfe254",
+            measurementId: "G-R0DF8W0N81"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Configure Google Provider
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const googleSignIn = document.getElementById('googleSignIn');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        const adminHint = document.getElementById('adminHint');
+        const hintText = document.getElementById('hintText');
+        const togglePassword = document.getElementById('togglePassword');
+        const forgotPassword = document.getElementById('forgotPassword');
+
+        // Admin credentials (hardcoded - not in Firebase)
+        const ADMIN_EMAIL = 'admin@bookmyevent$';
+        const ADMIN_PASSWORD = 'admin@bookmyevent$';    
+
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Show error function
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'flex';
+            successMessage.style.display = 'none';
+            adminHint.style.display = 'none';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show success function
+        function showSuccess(message) {
+            successText.textContent = message;
+            successMessage.style.display = 'flex';
+            errorMessage.style.display = 'none';
+            adminHint.style.display = 'none';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Show admin hint
+        function showAdminHint(message) {
+            hintText.textContent = message;
+            adminHint.style.display = 'flex';
+            setTimeout(() => {
+                adminHint.style.display = 'none';
+            }, 3000);
+        }
+
+        // Email/Password Login (Regular users - uses Firebase)
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!email || !password) {
+                showError('PLEASE FILL IN ALL FIELDS');
+                return;
+            }
+
+            // Show loading state
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SIGNING IN...';
+            loginBtn.disabled = true;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('Login successful:', userCredential.user.email);
+                
+                showSuccess('LOGIN SUCCESSFUL! REDIRECTING...');
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // Handle specific error codes
+                switch(error.code) {
+                    case 'auth/invalid-email':
+                        showError('INVALID EMAIL FORMAT');
+                        break;
+                    case 'auth/user-not-found':
+                        showError('NO ACCOUNT FOUND WITH THIS EMAIL');
+                        break;
+                    case 'auth/wrong-password':
+                        showError('INCORRECT PASSWORD');
+                        break;
+                    case 'auth/too-many-requests':
+                        showError('TOO MANY ATTEMPTS. TRY AGAIN LATER');
+                        break;
+                    default:
+                        showError('LOGIN FAILED. PLEASE TRY AGAIN');
+                }
+                
+                // Reset button
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> SIGN IN';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Google Sign In
+        googleSignIn.addEventListener('click', async () => {
+            // Show loading state
+            googleSignIn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONNECTING...';
+            googleSignIn.disabled = true;
+
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log('Google login successful:', result.user.email);
+                
+                showSuccess('GOOGLE SIGN IN SUCCESSFUL!');
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Google login error:', error);
+                
+                // Handle specific Google errors
+                switch(error.code) {
+                    case 'auth/popup-blocked':
+                        showError('POPUP WAS BLOCKED. PLEASE ALLOW POPUPS FOR THIS SITE.');
+                        break;
+                    case 'auth/popup-closed-by-user':
+                        showError('SIGN IN CANCELLED. PLEASE TRY AGAIN.');
+                        break;
+                    case 'auth/unauthorized-domain':
+                        showError('THIS DOMAIN IS NOT AUTHORIZED FOR GOOGLE SIGN IN. PLEASE ADD IT IN FIREBASE CONSOLE.');
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        showError('MULTIPLE POPUP REQUESTS. PLEASE TRY AGAIN.');
+                        break;
+                    default:
+                        showError('GOOGLE SIGN IN FAILED. PLEASE TRY EMAIL SIGN IN INSTEAD.');
+                }
+                
+                // Reset button
+                googleSignIn.innerHTML = 'CONTINUE WITH GOOGLE';
+                googleSignIn.disabled = false;
+            }
+        });
+
+        // ADMIN LOGIN - Hardcoded check (NO FIREBASE)
+        adminLoginBtn.addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent any default form submission
+    
+    // Get input values and trim them
+    const enteredEmail = emailInput.value ? emailInput.value.trim() : '';
+    const enteredPassword = passwordInput.value ? passwordInput.value.trim() : '';
+
+    console.log('Admin login attempt:', { 
+        enteredEmail, 
+        enteredPassword,
+        expectedEmail: ADMIN_EMAIL,
+        expectedPassword: ADMIN_PASSWORD,
+        emailMatch: enteredEmail === ADMIN_EMAIL,
+        passwordMatch: enteredPassword === ADMIN_PASSWORD
+    });
+
+    // Check if fields are empty
+    if (!enteredEmail || !enteredPassword) {
+        showError('PLEASE ENTER ADMIN EMAIL AND PASSWORD');
+        return;
+    }
+
+    // Show loading state
+    adminLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFYING...';
+    adminLoginBtn.disabled = true;
+
+    // HARDCODED CHECK - No Firebase involved
+    if (enteredEmail === ADMIN_EMAIL && enteredPassword === ADMIN_PASSWORD) {
+        console.log('Admin login successful - hardcoded check');
+        
+        // Set session storage for admin
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        sessionStorage.setItem('isAdmin', 'true'); // Additional flag for admin
+        
+        showSuccess('ADMIN ACCESS GRANTED! REDIRECTING...');
+        
+        // Redirect to admin panel
+        setTimeout(() => {
+            window.location.href = 'admin.html';
+        }, 1000);
+    } else {
+        // Provide more specific error messages
+        if (enteredEmail !== ADMIN_EMAIL && enteredPassword !== ADMIN_PASSWORD) {
+            showError('INVALID ADMIN CREDENTIALS - BOTH EMAIL AND PASSWORD ARE INCORRECT');
+        } else if (enteredEmail !== ADMIN_EMAIL) {
+            showError('INVALID ADMIN EMAIL');
+        } else {
+            showError('INVALID ADMIN PASSWORD');
+        }
+        
+        adminLoginBtn.innerHTML = '<i class="fas fa-user-shield"></i> ADMIN LOGIN';
+        adminLoginBtn.disabled = false;
+    }
+});
+
+    // Auto-fill admin credentials when hovering over admin button (optional but helpful)
+    adminLoginBtn.addEventListener('mouseenter', () => {
+        if (!emailInput.value && !passwordInput.value) {
+            emailInput.value = ADMIN_EMAIL;
+            passwordInput.value = ADMIN_PASSWORD;
+            showAdminHint('Admin credentials auto-filled! Click ADMIN LOGIN');
+        }
+    });
+
+    // Also add a double-click feature for admin login
+    adminLoginBtn.addEventListener('dblclick', () => {
+        emailInput.value = ADMIN_EMAIL;
+        passwordInput.value = ADMIN_PASSWORD;
+        showAdminHint('Admin credentials auto-filled!');
+    });
+
+    // Add this helper function at the beginning of your script
+    function clearMessages() {
+        errorMessage.style.display = 'none';
+        successMessage.style.display = 'none';
+        adminHint.style.display = 'none';
+    }
+
+    // Add this to ensure proper form handling
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearMessages(); // Clear any existing messages
+        
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!email || !password) {
+            showError('PLEASE FILL IN ALL FIELDS');
+            return;
+        }
+
+        // Show loading state
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SIGNING IN...';
+        loginBtn.disabled = true;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log('Login successful:', userCredential.user.email);
+            
+            // Clear any admin flags when regular user logs in
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('isAdmin');
+            
+            showSuccess('LOGIN SUCCESSFUL! REDIRECTING...');
+            
+            // Redirect to dashboard
+            setTimeout(() => {
+                window.location.href = 'home.html';
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Login error:', error);
+            
+            // Handle specific error codes
+            switch(error.code) {
+                case 'auth/invalid-email':
+                    showError('INVALID EMAIL FORMAT');
+                    break;
+                case 'auth/user-not-found':
+                    showError('NO ACCOUNT FOUND WITH THIS EMAIL');
+                    break;
+                case 'auth/wrong-password':
+                    showError('INCORRECT PASSWORD');
+                    break;
+                case 'auth/too-many-requests':
+                    showError('TOO MANY ATTEMPTS. TRY AGAIN LATER');
+                    break;
+                default:
+                    showError('LOGIN FAILED. PLEASE TRY AGAIN');
+            }
+            
+            // Reset button
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> SIGN IN';
+            loginBtn.disabled = false;
+        }
+    });
+
+    // Add this to handle the case where admin login is attempted from empty fields
+    adminLoginBtn.addEventListener('focus', () => {
+        if (!emailInput.value || !passwordInput.value) {
+            showAdminHint('Enter admin credentials or hover to auto-fill');
+        }
+    });
+
+    // Console welcome with clear admin credentials
+    console.log('%c🔐 BookMyEvent - Secure Login Portal', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
+    console.log('%c📍 Admin Login (Hardcoded - Not in Firebase)', 'color: #FF0000; font-size: 12px; font-weight: bold;');
+    console.log('%c📍 Admin Email: admin@bookmyevent$', 'color: #FF0000; font-size: 14px; font-weight: bold; background: #FFE5E5; padding: 2px 5px;');
+    console.log('%c📍 Admin Password: admin@bookmyevent$', 'color: #FF0000; font-size: 14px; font-weight: bold; background: #FFE5E5; padding: 2px 5px;');
+    console.log('%c📍 To use admin login: Enter the credentials above or hover over the ADMIN LOGIN button to auto-fill', 'color: #FFA500; font-size: 12px;');
+    </script>
+</body>
+</html>
