@@ -657,141 +657,171 @@
         let currentEventId = null;
         let currentUser = null;
 
-        // Check authentication first
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                console.log("Admin logged in:", user.email);
-                
-                // Check if user is admin
-                if (user.email !== 'admin@bookmyevent$') {
-                    alert('Access denied. Admin only.');
-                    await signOut(auth);
-                    sessionStorage.removeItem('adminLoggedIn');
-                    localStorage.removeItem('adminLoggedIn');
-                    window.location.href = '../login.html';
-                    return;
-                }
-                
-                // Load all data
-                loadUsers();
-                loadEvents();
-                loadComplaints();
-            } else {
-                // Check session storage as fallback
-                const isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') || localStorage.getItem('adminLoggedIn');
-                if (isAdminLoggedIn) {
-                    // Try to sign in with email/password? For now, redirect to login
-                    window.location.href = '../login.html';
-                } else {
-                    window.location.href = '../login.html';
-                }
-            }
-        });
+        // Show loading overlay
+        function showLoading() {
+            document.querySelectorAll('.loading').forEach(el => {
+                el.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            });
+        }
 
+        // Check authentication first - THIS WAS COMMENTED OUT!
+        // Check authentication// Check authentication
+        onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    console.log("Admin logged in:", user.email);
+                    
+                    // Check if user is admin
+                    if (user.email !== 'admin@bookmyevent$') {
+                        alert('Access denied. Admin only.');
+                        await signOut(auth);
+                        sessionStorage.removeItem('adminLoggedIn');
+                        localStorage.removeItem('adminLoggedIn');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    // Load all data
+                    loadUsers();
+                    loadEvents();
+                    loadComplaints();
+                } else {
+                    // Check session storage for admin flag (from hardcoded login)
+                    const isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+                    
+                    if (isAdminLoggedIn) {
+                        console.log('Admin session found, loading data with mock admin');
+                        // Create a mock currentUser for the session
+                        currentUser = { email: 'admin@bookmyevent$' };
+                        
+                        // Load all data
+                        loadUsers();
+                        loadEvents();
+                        loadComplaints();
+                    } else {
+                        console.log('No admin session, redirecting to login');
+                        window.location.href = 'login.html';
+                    }
+                }
+            });
         // Load users in real-time
         function loadUsers() {
-            const usersQuery = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
-            
-            onSnapshot(usersQuery, (snapshot) => {
-                const users = [];
-                snapshot.forEach(doc => {
-                    users.push({ id: doc.id, ...doc.data() });
-                });
+            try {
+                const usersQuery = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
                 
-                updateUsersTable(users);
-                document.getElementById('totalUsers').textContent = users.length;
-            }, (error) => {
-                console.error("Error loading users:", error);
-                document.getElementById('usersTableBody').innerHTML = `
-                    <tr>
-                        <td colspan="8" class="loading" style="color: #dc3545;">
-                            <i class="fas fa-exclamation-circle"></i> Error loading users: ${error.message}
-                        </td>
-                    </tr>
-                `;
-            });
+                onSnapshot(usersQuery, (snapshot) => {
+                    const users = [];
+                    snapshot.forEach(doc => {
+                        users.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    console.log("Users loaded:", users.length);
+                    updateUsersTable(users);
+                    document.getElementById('totalUsers').textContent = users.length;
+                }, (error) => {
+                    console.error("Error loading users:", error);
+                    document.getElementById('usersTableBody').innerHTML = `
+                        <tr>
+                            <td colspan="8" class="loading" style="color: #dc3545;">
+                                <i class="fas fa-exclamation-circle"></i> Error loading users: ${error.message}
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error in loadUsers:", error);
+            }
         }
 
         // Load events in real-time
         function loadEvents() {
-            // Active events (both 'active' and 'upcoming' status)
-            const activeQuery = query(
-                collection(db, 'events'), 
-                where('status', 'in', ['active', 'upcoming']),
-                orderBy('createdAt', 'desc')
-            );
-            
-            onSnapshot(activeQuery, (snapshot) => {
-                const events = [];
-                snapshot.forEach(doc => {
-                    events.push({ id: doc.id, ...doc.data() });
+            try {
+                // Active events (both 'active' and 'upcoming' status)
+                const activeQuery = query(
+                    collection(db, 'events'), 
+                    where('status', 'in', ['active', 'upcoming']),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                onSnapshot(activeQuery, (snapshot) => {
+                    const events = [];
+                    snapshot.forEach(doc => {
+                        events.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    console.log("Active events loaded:", events.length);
+                    updateEventsTable(events);
+                    document.getElementById('activeEvents').textContent = events.length;
+                    
+                    // Calculate total tickets sold
+                    const totalSold = events.reduce((sum, event) => sum + (event.ticketsSold || 0), 0);
+                    document.getElementById('totalTicketsSold').textContent = totalSold;
+                }, (error) => {
+                    console.error("Error loading active events:", error);
+                    document.getElementById('eventsTableBody').innerHTML = `
+                        <tr>
+                            <td colspan="11" class="loading" style="color: #dc3545;">
+                                <i class="fas fa-exclamation-circle"></i> Error loading events: ${error.message}
+                            </td>
+                        </tr>
+                    `;
                 });
-                
-                updateEventsTable(events);
-                document.getElementById('activeEvents').textContent = events.length;
-                
-                // Calculate total tickets sold
-                const totalSold = events.reduce((sum, event) => sum + (event.ticketsSold || 0), 0);
-                document.getElementById('totalTicketsSold').textContent = totalSold;
-            }, (error) => {
-                console.error("Error loading active events:", error);
-                document.getElementById('eventsTableBody').innerHTML = `
-                    <tr>
-                        <td colspan="11" class="loading" style="color: #dc3545;">
-                            <i class="fas fa-exclamation-circle"></i> Error loading events: ${error.message}
-                        </td>
-                    </tr>
-                `;
-            });
 
-            // Completed events
-            const completedQuery = query(
-                collection(db, 'events'), 
-                where('status', '==', 'completed'),
-                orderBy('createdAt', 'desc')
-            );
-            
-            onSnapshot(completedQuery, (snapshot) => {
-                document.getElementById('completedEvents').textContent = snapshot.size;
-            }, (error) => {
-                console.error("Error loading completed events:", error);
-            });
+                // Completed events
+                const completedQuery = query(
+                    collection(db, 'events'), 
+                    where('status', '==', 'completed'),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                onSnapshot(completedQuery, (snapshot) => {
+                    document.getElementById('completedEvents').textContent = snapshot.size;
+                }, (error) => {
+                    console.error("Error loading completed events:", error);
+                });
+            } catch (error) {
+                console.error("Error in loadEvents:", error);
+            }
         }
 
         // Load complaints in real-time
         function loadComplaints() {
-            // Check if complaints collection exists
-            const complaintsQuery = query(collection(db, 'complaints'), orderBy('createdAt', 'desc'));
-            
-            onSnapshot(complaintsQuery, (snapshot) => {
-                const complaints = [];
-                snapshot.forEach(doc => {
-                    complaints.push({ id: doc.id, ...doc.data() });
-                });
+            try {
+                // Check if complaints collection exists
+                const complaintsQuery = query(collection(db, 'complaints'), orderBy('createdAt', 'desc'));
                 
-                updateComplaintsTable(complaints);
-            }, (error) => {
-                console.error("Error loading complaints:", error);
-                // If collection doesn't exist, show empty state
-                if (error.code === 'permission-denied' || error.code === 'not-found') {
-                    document.getElementById('complaintsTableBody').innerHTML = `
-                        <tr>
-                            <td colspan="7" class="loading">
-                                <i class="fas fa-info-circle"></i> No complaints yet
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    document.getElementById('complaintsTableBody').innerHTML = `
-                        <tr>
-                            <td colspan="7" class="loading" style="color: #dc3545;">
-                                <i class="fas fa-exclamation-circle"></i> Error loading complaints
-                            </td>
-                        </tr>
-                    `;
-                }
-            });
+                onSnapshot(complaintsQuery, (snapshot) => {
+                    const complaints = [];
+                    snapshot.forEach(doc => {
+                        complaints.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    console.log("Complaints loaded:", complaints.length);
+                    updateComplaintsTable(complaints);
+                }, (error) => {
+                    console.error("Error loading complaints:", error);
+                    // If collection doesn't exist, show empty state
+                    if (error.code === 'permission-denied' || error.code === 'not-found') {
+                        document.getElementById('complaintsTableBody').innerHTML = `
+                            <tr>
+                                <td colspan="7" class="loading">
+                                    <i class="fas fa-info-circle"></i> No complaints yet
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        document.getElementById('complaintsTableBody').innerHTML = `
+                            <tr>
+                                <td colspan="7" class="loading" style="color: #dc3545;">
+                                    <i class="fas fa-exclamation-circle"></i> Error loading complaints: ${error.message}
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+            } catch (error) {
+                console.error("Error in loadComplaints:", error);
+            }
         }
 
         // Update users table
@@ -946,71 +976,76 @@
 
         // View event details
         window.viewEventDetails = async (eventId) => {
-            currentEventId = eventId;
-            const eventDoc = await getDoc(doc(db, 'events', eventId));
-            const event = eventDoc.data();
-            
-            const detailsHtml = `
-                <div class="detail-row">
-                    <span class="detail-label">Event Title:</span>
-                    <span class="detail-value">${event.title || event.name || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Category:</span>
-                    <span class="detail-value">${event.category || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Description:</span>
-                    <span class="detail-value">${event.description || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Date:</span>
-                    <span class="detail-value">${event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Time:</span>
-                    <span class="detail-value">${event.startTime || 'N/A'} - ${event.endTime || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Venue:</span>
-                    <span class="detail-value">${event.venueName || event.venue || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">City:</span>
-                    <span class="detail-value">${event.city || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Address:</span>
-                    <span class="detail-value">${event.fullAddress || event.location || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Ticket Type:</span>
-                    <span class="detail-value">${event.ticketType || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Ticket Price:</span>
-                    <span class="detail-value">${event.ticketPrice ? '₹' + event.ticketPrice : (event.ticketType === 'Free' ? 'Free' : 'N/A')}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Tickets Sold:</span>
-                    <span class="detail-value">${event.ticketsSold || 0} / ${event.totalTickets || 0}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Organizer:</span>
-                    <span class="detail-value">${event.organizerName || event.organizer || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Organizer Email:</span>
-                    <span class="detail-value">${event.organizerEmail || 'N/A'}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Organizer Phone:</span>
-                    <span class="detail-value">${event.organizerPhone || 'N/A'}</span>
-                </div>
-            `;
-            
-            document.getElementById('eventDetailsBody').innerHTML = detailsHtml;
-            document.getElementById('eventModal').style.display = 'flex';
+            try {
+                currentEventId = eventId;
+                const eventDoc = await getDoc(doc(db, 'events', eventId));
+                const event = eventDoc.data();
+                
+                const detailsHtml = `
+                    <div class="detail-row">
+                        <span class="detail-label">Event Title:</span>
+                        <span class="detail-value">${event.title || event.name || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Category:</span>
+                        <span class="detail-value">${event.category || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Description:</span>
+                        <span class="detail-value">${event.description || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date:</span>
+                        <span class="detail-value">${event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Time:</span>
+                        <span class="detail-value">${event.startTime || 'N/A'} - ${event.endTime || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Venue:</span>
+                        <span class="detail-value">${event.venueName || event.venue || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">City:</span>
+                        <span class="detail-value">${event.city || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Address:</span>
+                        <span class="detail-value">${event.fullAddress || event.location || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Ticket Type:</span>
+                        <span class="detail-value">${event.ticketType || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Ticket Price:</span>
+                        <span class="detail-value">${event.ticketPrice ? '₹' + event.ticketPrice : (event.ticketType === 'Free' ? 'Free' : 'N/A')}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tickets Sold:</span>
+                        <span class="detail-value">${event.ticketsSold || 0} / ${event.totalTickets || 0}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Organizer:</span>
+                        <span class="detail-value">${event.organizerName || event.organizer || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Organizer Email:</span>
+                        <span class="detail-value">${event.organizerEmail || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Organizer Phone:</span>
+                        <span class="detail-value">${event.organizerPhone || 'N/A'}</span>
+                    </div>
+                `;
+                
+                document.getElementById('eventDetailsBody').innerHTML = detailsHtml;
+                document.getElementById('eventModal').style.display = 'flex';
+            } catch (error) {
+                console.error("Error viewing event:", error);
+                alert("Error loading event details: " + error.message);
+            }
         };
 
         // Edit event

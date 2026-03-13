@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>BookMyEvent - Create Account</title>
-    
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts - Figtree -->
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -26,8 +28,9 @@
             justify-content: center;
             background: linear-gradient(135deg, #f5f0ff 0%, #e9d9ff 100%);
             position: relative;
-            padding: 20px;
+            padding: 30px 15px;
         }
+
 
         /* Background pattern */
         .bg-pattern {
@@ -36,7 +39,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 30% 40%, rgba(91, 31, 166, 0.03) 0%, transparent 30%),
                 radial-gradient(circle at 70% 60%, rgba(156, 77, 255, 0.03) 0%, transparent 40%),
                 repeating-linear-gradient(45deg, rgba(91, 31, 166, 0.02) 0px, rgba(91, 31, 166, 0.02) 2px, transparent 2px, transparent 8px);
@@ -46,40 +49,43 @@
 
         /* Main container */
         .container {
-            max-width: 1200px;
+            max-width: 1150px;
             width: 100%;
             background-color: #5B1FA6;
             border: 4px solid #000;
-            box-shadow: 20px 20px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 14px 14px 0 rgba(0, 0, 0, 0.2);
             position: relative;
             z-index: 10;
-            border-radius: 20px;
-            overflow: hidden;
+            border-radius: 18px;
+            margin: auto;
         }
+
 
         /* Content card with image and form side by side */
         .content {
             background-color: #FFFFFF;
             border: 4px solid #000;
-            margin: 20px;
+            margin: 15px;
             display: flex;
             overflow: hidden;
             position: relative;
-            border-radius: 15px;
+            border-radius: 14px;
         }
+
 
         /* Left side - Image */
         .signup-image {
-            flex: 1.2;
+            flex: 1.1;
             background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
             border-right: 4px solid #000;
             position: relative;
-            min-height: 650px;
+            min-height: 520px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
         }
+
 
         .signup-image img {
             width: 100%;
@@ -116,8 +122,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .image-content .badge {
@@ -188,11 +201,12 @@
         /* Right side - Sign Up Form */
         .signup-form-section {
             flex: 1;
-            padding: 50px 40px;
+            padding: 40px 35px;
             background: #FFFFFF;
             overflow-y: auto;
-            max-height: 650px;
+            max-height: 600px;
         }
+
 
         /* Custom scrollbar */
         .signup-form-section::-webkit-scrollbar {
@@ -342,16 +356,17 @@
 
         .form-input {
             width: 100%;
-            padding: 18px 20px 18px 50px;
+            padding: 16px 18px 16px 48px;
             font-family: 'Figtree', sans-serif;
             font-size: 1rem;
             border: 3px solid #000;
             background: #FFFFFF;
-            box-shadow: 6px 6px 0 #E3D1FF;
-            transition: all 0.2s ease;
+            box-shadow: 4px 4px 0 #E3D1FF;
+            transition: all 0.15s ease;
             outline: none;
-            border-radius: 12px;
+            border-radius: 10px;
         }
+
 
         .form-input:focus {
             box-shadow: 3px 3px 0 #5B1FA6;
@@ -403,25 +418,22 @@
         /* Buttons */
         .btn {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             font-family: 'Figtree', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
-            text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 1px;
             border: 4px solid #000;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            margin: 15px 0;
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
+            gap: 10px;
+            margin: 12px 0;
+            border-radius: 12px;
         }
+
 
         .btn::before {
             content: '';
@@ -465,7 +477,7 @@
         .btn-google img {
             width: 24px;
             height: 24px;
-            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1));
+            filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.1));
         }
 
         /* Divider */
@@ -543,7 +555,8 @@
         }
 
         /* Messages */
-        .error-message, .success-message {
+        .error-message,
+        .success-message {
             padding: 15px;
             margin-bottom: 25px;
             border: 4px solid #000;
@@ -569,7 +582,8 @@
             box-shadow: 6px 6px 0 #5B1FA6;
         }
 
-        .error-message i, .success-message i {
+        .error-message i,
+        .success-message i {
             font-size: 1.3rem;
         }
 
@@ -580,24 +594,20 @@
             height: 25px;
             border: 4px solid #000;
             z-index: 20;
-            border-radius: 8px;
         }
 
-        .corner-tl {
+        .container .corner-tl {
+            border-radius: 18px 0px 0px 0px;
             top: -4px;
             left: -4px;
-            border-right: none;
-            border-bottom: none;
-            background: linear-gradient(135deg, #5B1FA6, #7A2CCB);
         }
 
-        .corner-br {
+        .container .corner-br {
+            border-radius: 0px 0px 18px 0px;
             bottom: -4px;
             right: -4px;
-            border-left: none;
-            border-top: none;
-            background: linear-gradient(135deg, #9C4DFF, #C58BFF);
         }
+
 
         /* Loading spinner */
         .fa-spinner {
@@ -605,8 +615,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Fade in animation */
@@ -619,6 +634,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -627,8 +643,15 @@
 
         /* Pulse animation for image content */
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .image-content .badge {
@@ -637,30 +660,29 @@
 
         /* Mobile responsive */
         @media screen and (max-width: 900px) {
+
+            body {
+                padding: 20px 10px;
+            }
+
             .content {
                 flex-direction: column;
+                margin: 10px;
             }
 
             .signup-image {
-                min-height: 300px;
+                min-height: 220px;
                 border-right: none;
                 border-bottom: 4px solid #000;
             }
 
-            .image-content h3 {
-                font-size: 2.5rem;
-            }
-
             .signup-form-section {
                 max-height: none;
-                padding: 35px 25px;
+                padding: 30px 20px;
             }
 
-            .subhead::before,
-            .subhead::after {
-                width: 20px;
-            }
         }
+
 
         @media screen and (max-width: 480px) {
             .signup-form-section {
@@ -719,44 +741,21 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Background pattern -->
     <div class="bg-pattern"></div>
-
-    <!-- Corner accents -->
-    <div class="corner corner-tl"></div>
-    <div class="corner corner-br"></div>
-
     <!-- Main Container -->
     <div class="container">
+        <!-- Corner accents -->
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-br"></div>
         <div class="content">
             <!-- Left side - Image -->
             <div class="signup-image">
-                <img src="assets/images/signup.png" alt="Join BookMyEvent" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22600%22 viewBox=%220 0 500 600%22><rect width=%22500%22 height=%22600%22 fill=%22%235B1FA6%22/><circle cx=%22250%22 cy=%22250%22 r=%22100%22 fill=%22%23E3D1FF%22/><text x=%22250%22 y=%22400%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23FFFFFF%22 font-weight=%22bold%22>JOIN US</text></svg>'">
+                <img src="../assets/images/signup.png" alt="Join BookMyEvent">
                 <div class="image-overlay"></div>
-                <div class="image-content">
-                    <div class="badge">WELCOME TO</div>
-                    <h3>BOOKMYEVENT</h3>
-                    <p>Discover amazing events and connect with event lovers worldwide</p>
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Access to 500+ premium events</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Personalized recommendations</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Secure ticket booking</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Early bird discounts</span>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
 
             <!-- Right side - Sign Up Form -->
@@ -803,7 +802,8 @@
                         <label class="form-label">EMAIL ADDRESS</label>
                         <div class="input-wrapper">
                             <i class="fas fa-envelope input-icon"></i>
-                            <input type="email" class="form-input" id="email" placeholder="hello@bookmyevent.com" required>
+                            <input type="email" class="form-input" id="email" placeholder="hello@bookmyevent.com"
+                                required>
                         </div>
                     </div>
 
@@ -811,7 +811,8 @@
                         <label class="form-label">PASSWORD</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock input-icon"></i>
-                            <input type="password" class="form-input" id="password" placeholder="Create a strong password" required>
+                            <input type="password" class="form-input" id="password"
+                                placeholder="Create a strong password" required>
                             <i class="fas fa-eye toggle-password" id="togglePassword"></i>
                         </div>
                         <!-- Password strength indicator -->
@@ -825,7 +826,8 @@
                         <label class="form-label">CONFIRM PASSWORD</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock input-icon"></i>
-                            <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm your password" required>
+                            <input type="password" class="form-input" id="confirmPassword"
+                                placeholder="Confirm your password" required>
                             <i class="fas fa-eye toggle-password" id="toggleConfirmPassword"></i>
                         </div>
                     </div>
@@ -850,7 +852,8 @@
 
                 <!-- Terms -->
                 <div class="terms">
-                    BY CREATING AN ACCOUNT, YOU AGREE TO OUR <a href="#">TERMS OF SERVICE</a> AND <a href="#">PRIVACY POLICY</a>
+                    BY CREATING AN ACCOUNT, YOU AGREE TO OUR <a href="#">TERMS OF SERVICE</a> AND <a href="#">PRIVACY
+                        POLICY</a>
                 </div>
 
                 <!-- Login link -->
@@ -865,12 +868,12 @@
     <script type="module">
         // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, 
+        import {
+            getAuth,
             createUserWithEmailAndPassword,
             updateProfile,
             signInWithPopup,
-            GoogleAuthProvider 
+            GoogleAuthProvider
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import {
             getFirestore,
@@ -914,14 +917,14 @@
         const strengthText = document.getElementById('strengthText');
 
         // Toggle password visibility
-        togglePassword.addEventListener('click', function() {
+        togglePassword.addEventListener('click', function () {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
         });
 
-        toggleConfirmPassword.addEventListener('click', function() {
+        toggleConfirmPassword.addEventListener('click', function () {
             const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             confirmPasswordInput.setAttribute('type', type);
             this.classList.toggle('fa-eye');
@@ -929,10 +932,10 @@
         });
 
         // Password strength checker
-        passwordInput.addEventListener('input', function() {
+        passwordInput.addEventListener('input', function () {
             const password = this.value;
             const strength = checkPasswordStrength(password);
-            
+
             // Update strength bar
             strengthBar.style.width = strength.score + '%';
             strengthBar.style.background = strength.color;
@@ -951,13 +954,13 @@
 
             // Length check
             if (password.length >= 8) score += 25;
-            
+
             // Uppercase check
             if (/[A-Z]/.test(password)) score += 25;
-            
+
             // Number check
             if (/[0-9]/.test(password)) score += 25;
-            
+
             // Special character check
             if (/[^A-Za-z0-9]/.test(password)) score += 25;
 
@@ -1032,7 +1035,7 @@
         // Email/Password Sign Up
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const username = usernameInput.value.trim();
             const email = emailInput.value.trim();
             const password = passwordInput.value.trim();
@@ -1067,7 +1070,7 @@
                 // Create user in Firebase Auth
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                
+
                 // Update profile with username
                 await updateProfile(user, {
                     displayName: username
@@ -1077,19 +1080,19 @@
                 await createUserDocument(user, username);
 
                 console.log('Signup successful:', user.email);
-                
+
                 showSuccess('ACCOUNT CREATED! WELCOME TO BOOKMYEVENT!');
-                
+
                 // Redirect to home page
                 setTimeout(() => {
                     window.location.href = 'home.html';
                 }, 1500);
-                
+
             } catch (error) {
                 console.error('Signup error:', error);
-                
+
                 // Handle specific error codes
-                switch(error.code) {
+                switch (error.code) {
                     case 'auth/email-already-in-use':
                         showError('EMAIL ALREADY REGISTERED');
                         break;
@@ -1102,7 +1105,7 @@
                     default:
                         showError('SIGNUP FAILED. PLEASE TRY AGAIN');
                 }
-                
+
                 // Reset button
                 signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> CREATE ACCOUNT';
                 signupBtn.disabled = false;
@@ -1118,9 +1121,9 @@
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
-                
+
                 console.log('Google signup successful:', user.email);
-                
+
                 // Check if user document exists, if not create it
                 const userRef = doc(db, 'users', user.uid);
                 await setDoc(userRef, {
@@ -1142,19 +1145,19 @@
                     emailVerified: user.emailVerified,
                     accountType: 'user'
                 }, { merge: true }); // Use merge to not overwrite existing data
-                
+
                 showSuccess('GOOGLE SIGN UP SUCCESSFUL!');
-                
+
                 // Redirect to home page
                 setTimeout(() => {
                     window.location.href = 'pages/home.html';
                 }, 1500);
-                
+
             } catch (error) {
                 console.error('Google signup error:', error);
-                
+
                 // Handle specific Google errors
-                switch(error.code) {
+                switch (error.code) {
                     case 'auth/popup-blocked':
                         showError('POPUP WAS BLOCKED. PLEASE ALLOW POPUPS.');
                         break;
@@ -1167,7 +1170,7 @@
                     default:
                         showError('GOOGLE SIGN UP FAILED. TRY AGAIN.');
                 }
-                
+
                 // Reset button
                 googleSignUp.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> CONTINUE WITH GOOGLE';
                 googleSignUp.disabled = false;
@@ -1179,4 +1182,5 @@
         console.log('%c📍 Firestore Integration Active - User documents will be created', 'color: #00C851; font-size: 12px;');
     </script>
 </body>
+
 </html>
