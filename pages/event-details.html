@@ -799,84 +799,20 @@
             box-shadow: 5px 5px 0 #000;
         }
 
+        .highlight {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            color: #FFFFFF;
+            padding: 0 12px;
+            display: inline-block;
+            border: 3px solid #000;
+            transform: rotate(-1deg);
+            box-shadow: 5px 5px 0 #000;
+            font-weight: 900;
+        }
+
         .dialog-btn:hover {
             transform: translate(3px, 3px);
             box-shadow: 2px 2px 0 #000;
-        }
-
-        /* Booking Success Dialog */
-        .success-dialog {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-        }
-
-        .success-content {
-            background: #FFFFFF;
-            border: 4px solid #28a745;
-            padding: 40px;
-            max-width: 450px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 20px 20px 0 rgba(0,0,0,0.2);
-            border-radius: 20px;
-        }
-
-        .success-content i {
-            font-size: 5rem;
-            color: #28a745;
-            margin-bottom: 20px;
-        }
-
-        .success-content h3 {
-            font-size: 2rem;
-            font-weight: 900;
-            margin-bottom: 15px;
-            color: #28a745;
-        }
-
-        .success-content p {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .booking-id {
-            background: #F5F0FF;
-            border: 2px solid #000;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin: 20px 0;
-            border-radius: 10px;
-        }
-
-        .success-btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background: linear-gradient(135deg, #28a745, #218838);
-            border: 3px solid #000;
-            font-weight: 700;
-            text-decoration: none;
-            color: #FFFFFF;
-            box-shadow: 8px 8px 0 #000;
-            transition: all 0.2s ease;
-            font-size: 1.2rem;
-            margin-top: 20px;
-            border-radius: 12px;
-        }
-
-        .success-btn:hover {
-            transform: translate(4px, 4px);
-            box-shadow: 4px 4px 0 #000;
         }
 
         /* Footer */
@@ -1065,11 +1001,11 @@
                     <i class="fas fa-arrow-left"></i> BACK TO HOME
                 </a>
                 
-                <div class="logo-text">
-                    <span class="book">BOOK</span>
-                    <span class="my">MY</span>
-                    <span class="event">EVENT</span>
-                </div>
+                <h1>
+              
+                    <span class="highlight">BOOKMYEVENT</span>
+                </h1>
+
                 
                 <!-- Auth Buttons -->
                 <div class="auth-buttons" id="authButtons">
@@ -1323,20 +1259,6 @@
         </div>
     </div>
 
-    <!-- Booking Success Dialog -->
-    <div id="successDialog" class="success-dialog" style="display: none;">
-        <div class="success-content">
-            <i class="fas fa-check-circle"></i>
-            <h3>BOOKING CONFIRMED!</h3>
-            <p>Your tickets have been booked successfully.</p>
-            <div class="booking-id" id="bookingIdDisplay">BOOKING ID: #BME-123456</div>
-            <p>A confirmation email has been sent to your email address.</p>
-            <a href="my-tickets.html" class="success-btn">
-                <i class="fas fa-ticket-alt"></i> VIEW MY TICKETS
-            </a>
-        </div>
-    </div>
-
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -1353,10 +1275,7 @@
             addDoc,
             updateDoc,
             increment,
-            serverTimestamp,
-            query,
-            where,
-            getDocs
+            serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Firebase configuration
@@ -1385,7 +1304,6 @@
         const userMenuBtn = document.getElementById('userMenuBtn');
         const userDropdown = document.getElementById('userDropdown');
         const loginDialog = document.getElementById('loginDialog');
-        const successDialog = document.getElementById('successDialog');
         const dropdownUserName = document.getElementById('dropdownUserName');
         const dropdownUserEmail = document.getElementById('dropdownUserEmail');
         
@@ -1418,8 +1336,6 @@
         const increaseBtn = document.getElementById('increaseBtn');
         const bookBtn = document.getElementById('bookBtn');
         const totalPriceDisplay = document.getElementById('totalPriceDisplay');
-        const bookingIdDisplay = document.getElementById('bookingIdDisplay');
-        const ticketBox = document.getElementById('ticketBox');
 
         let currentUser = null;
         let currentEvent = null;
@@ -1667,7 +1583,7 @@
             }
         }
 
-        // Book event
+        // Book event - redirect to payment page
         window.bookEvent = async function() {
             if (!currentUser) {
                 loginDialog.style.display = 'flex';
@@ -1690,28 +1606,27 @@
             bookBtn.disabled = true;
             
             try {
-                // Create booking in Firestore
+                // Calculate total price
+                const totalPrice = (currentEvent.ticketPrice || 0) * currentQuantity;
+                
+                // Create booking in Firestore with PENDING status
                 const bookingData = {
                     eventId: currentEvent.id,
+                    eventName: currentEvent.title,
                     eventTitle: currentEvent.title,
                     userId: currentUser.uid,
                     userEmail: currentUser.email,
                     quantity: currentQuantity,
                     ticketPrice: currentEvent.ticketPrice || 0,
-                    totalAmount: (currentEvent.ticketPrice || 0) * currentQuantity,
-                    platformFee: (currentEvent.ticketPrice || 0) * currentQuantity * 0.1,
+                    price: totalPrice,
+                    totalAmount: totalPrice,
+                    platformFee: totalPrice * 0.1,
                     bookingDate: serverTimestamp(),
-                    status: 'confirmed',
-                    paymentStatus: 'completed'
+                    status: 'pending',
+                    paymentStatus: 'pending'
                 };
                 
                 const bookingRef = await addDoc(collection(db, 'bookings'), bookingData);
-                
-                // Update tickets sold in event
-                await updateDoc(doc(db, 'events', currentEvent.id), {
-                    ticketsSold: increment(currentQuantity),
-                    revenue: increment((currentEvent.ticketPrice || 0) * currentQuantity)
-                });
                 
                 // Add to user's booking history
                 const userRef = doc(db, 'users', currentUser.uid);
@@ -1727,34 +1642,12 @@
                     });
                 }
                 
-                // Show success dialog
-                const bookingId = 'BME-' + bookingRef.id.slice(0, 6).toUpperCase();
-                bookingIdDisplay.textContent = `BOOKING ID: #${bookingId}`;
-                successDialog.style.display = 'flex';
-                
-                // Update UI
-                ticketsSold.textContent = (currentEvent.ticketsSold || 0) + currentQuantity;
-                
-                // Check if sold out
-                const remaining = (currentEvent.totalTickets || 0) - ((currentEvent.ticketsSold || 0) + currentQuantity);
-                if (remaining <= 0) {
-                    bookBtn.innerHTML = '<i class="fas fa-times-circle"></i> SOLD OUT';
-                    decreaseBtn.disabled = true;
-                    increaseBtn.disabled = true;
-                } else {
-                    // Reset button
-                    bookBtn.innerHTML = '<i class="fas fa-ticket-alt"></i> BOOK NOW';
-                    bookBtn.disabled = false;
-                    
-                    // Reset quantity
-                    currentQuantity = 1;
-                    quantityInput.value = 1;
-                    updateTotalPrice();
-                }
+                // Redirect to payment page with booking ID
+                window.location.href = `payment.html?bookingId=${bookingRef.id}`;
                 
             } catch (error) {
                 console.error('Booking error:', error);
-                alert('Failed to book tickets: ' + error.message);
+                alert('Failed to create booking: ' + error.message);
                 
                 // Reset button
                 bookBtn.innerHTML = '<i class="fas fa-ticket-alt"></i> BOOK NOW';
@@ -1766,13 +1659,6 @@
         loginDialog.addEventListener('click', (e) => {
             if (e.target === loginDialog) {
                 loginDialog.style.display = 'none';
-            }
-        });
-
-        // Close success dialog
-        successDialog.addEventListener('click', (e) => {
-            if (e.target === successDialog) {
-                successDialog.style.display = 'none';
             }
         });
 

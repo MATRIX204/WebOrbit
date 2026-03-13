@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>BookMyEvent - Payment</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Figtree -->
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Figtree', sans-serif;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 30% 40%, rgba(255,255,255,0.1) 0%, transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(255,255,255,0.1) 0%, transparent 40%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: #FFFFFF;
+            border: 4px solid #000;
+            box-shadow: 20px 20px 0 rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 10;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            padding: 30px;
+            text-align: center;
+            border-bottom: 4px solid #000;
+        }
+
+        .header i {
+            font-size: 4rem;
+            color: #FFFFFF;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            text-shadow: 3px 3px 0 #000;
+        }
+
+        /* Content */
+        .content {
+            padding: 30px;
+        }
+
+        /* Event Info */
+        .event-info {
+            background: #F5F0FF;
+            border: 3px solid #000;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        .event-name {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #5B1FA6;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .booking-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 2px solid #E3D1FF;
+        }
+
+        .booking-details:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #000;
+        }
+
+        .detail-value.price {
+            color: #5B1FA6;
+            font-size: 1.8rem;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            margin: 25px 0;
+        }
+
+        .payment-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-title i {
+            color: #5B1FA6;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #FFFFFF;
+            border: 3px solid #000;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+
+        .payment-option:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .payment-option.selected {
+            background: #E3D1FF;
+            border-color: #5B1FA6;
+        }
+
+        .payment-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #5B1FA6;
+        }
+
+        .payment-option i {
+            font-size: 1.8rem;
+            color: #5B1FA6;
+        }
+
+        .payment-option span {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #000;
+        }
+
+        /* Card Details Form */
+        .card-details {
+            background: #F5F0FF;
+            border: 3px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .card-details.show {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #5B1FA6;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-family: 'Figtree', sans-serif;
+            font-size: 1rem;
+            border: 2px solid #000;
+            background: #FFFFFF;
+            transition: all 0.2s ease;
+            outline: none;
+            border-radius: 8px;
+        }
+
+        .form-input:focus {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #5B1FA6;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* Pay Button */
+        .pay-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            border: 4px solid #000;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: #FFFFFF;
+            box-shadow: 10px 10px 0 #000;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            border-radius: 15px;
+        }
+
+        .pay-btn:hover {
+            transform: translate(5px, 5px);
+            box-shadow: 5px 5px 0 #000;
+        }
+
+        .pay-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 10px 10px 0 #000;
+        }
+
+        /* Success Section */
+        .success-section {
+            background: #F5F0FF;
+            border: 3px solid #28a745;
+            padding: 30px;
+            margin-top: 20px;
+            text-align: center;
+            border-radius: 15px;
+        }
+
+        .success-section i {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .success-section h2 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .success-section p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .qr-section {
+            background: #FFFFFF;
+            border: 3px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        .qr-section img {
+            max-width: 200px;
+            border: 2px solid #000;
+            padding: 10px;
+            background: #FFFFFF;
+            border-radius: 10px;
+        }
+
+        .qr-section p {
+            margin-top: 10px;
+            font-weight: 600;
+            color: #5B1FA6;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: #5B1FA6;
+            border: 3px solid #000;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-decoration: none;
+            box-shadow: 6px 6px 0 #000;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0 #000;
+        }
+
+        .tickets-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #5B1FA6;
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 2px solid #5B1FA6;
+        }
+
+        /* Loading Spinner */
+        .fa-spinner {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Popup */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup-content {
+            background: #FFFFFF;
+            border: 4px solid #5B1FA6;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 20px 20px 0 rgba(0,0,0,0.2);
+            border-radius: 20px;
+        }
+
+        .popup-content i {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .popup-content h3 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #5B1FA6;
+            margin-bottom: 15px;
+        }
+
+        .popup-content p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .popup-content button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border: 3px solid #000;
+            font-weight: 700;
+            color: #FFFFFF;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 5px 5px 0 #000;
+            border-radius: 10px;
+        }
+
+        .popup-content button:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .event-name {
+                font-size: 1.5rem;
+            }
+
+            .detail-value.price {
+                font-size: 1.5rem;
+            }
+
+            .pay-btn {
+                font-size: 1.2rem;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <div class="container" id="paymentContainer">
+        <div class="header">
+            <i class="fas fa-credit-card"></i>
+            <h1>COMPLETE PAYMENT</h1>
+        </div>
+
+        <div class="content">
+            <!-- Loading State -->
+            <div id="loadingState" style="text-align: center; padding: 40px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #5B1FA6; margin-bottom: 20px;"></i>
+                <p style="font-size: 1.2rem; color: #666;">Loading booking details...</p>
+            </div>
+
+            <!-- Payment Section (Hidden by default) -->
+            <div id="paymentSection" style="display: none;">
+                <!-- Event Info -->
+                <div class="event-info" id="eventInfo">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="payment-methods">
+                    <div class="payment-title">
+                        <i class="fas fa-wallet"></i> SELECT PAYMENT METHOD
+                    </div>
+
+                    <div class="payment-option selected" onclick="selectPayment('card')">
+                        <input type="radio" name="payment" id="cardPayment" checked>
+                        <i class="fas fa-credit-card"></i>
+                        <span>Credit / Debit Card</span>
+                    </div>
+
+                    <div class="payment-option" onclick="selectPayment('upi')">
+                        <input type="radio" name="payment" id="upiPayment">
+                        <i class="fab fa-google-pay"></i>
+                        <span>UPI / Google Pay</span>
+                    </div>
+
+                    <div class="payment-option" onclick="selectPayment('netbanking')">
+                        <input type="radio" name="payment" id="netbankingPayment">
+                        <i class="fas fa-university"></i>
+                        <span>Net Banking</span>
+                    </div>
+                </div>
+
+                <!-- Card Details Form -->
+                <div class="card-details show" id="cardDetails">
+                    <div class="form-group">
+                        <label class="form-label">CARD NUMBER</label>
+                        <input type="text" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19" id="cardNumber">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">CARD HOLDER NAME</label>
+                        <input type="text" class="form-input" placeholder="JOHN DOE" id="cardName">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">EXPIRY</label>
+                            <input type="text" class="form-input" placeholder="MM/YY" maxlength="5" id="expiry">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CVV</label>
+                            <input type="password" class="form-input" placeholder="123" maxlength="3" id="cvv">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UPI Details (Hidden by default) -->
+                <div class="card-details" id="upiDetails">
+                    <div class="form-group">
+                        <label class="form-label">UPI ID</label>
+                        <input type="text" class="form-input" placeholder="username@okhdfcbank" id="upiId">
+                    </div>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">Enter your UPI ID to receive payment request</p>
+                </div>
+
+                <!-- Net Banking Details (Hidden by default) -->
+                <div class="card-details" id="netbankingDetails">
+                    <div class="form-group">
+                        <label class="form-label">SELECT BANK</label>
+                        <select class="form-input" id="bankSelect">
+                            <option value="">Choose your bank</option>
+                            <option value="sbi">State Bank of India</option>
+                            <option value="hdfc">HDFC Bank</option>
+                            <option value="icici">ICICI Bank</option>
+                            <option value="axis">Axis Bank</option>
+                            <option value="kotak">Kotak Mahindra Bank</option>
+                            <option value="yes">Yes Bank</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Pay Button -->
+                <button class="pay-btn" onclick="processPayment()" id="payBtn">
+                    <i class="fas fa-lock"></i> PAY ₹<span id="payAmount">0</span>
+                </button>
+            </div>
+
+            <!-- Success Section (Hidden by default) -->
+            <div id="successSection" class="success-section" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <h2>PAYMENT SUCCESSFUL!</h2>
+                <p>Your tickets have been booked successfully.</p>
+                
+                <div class="qr-section">
+                    <img id="qrCode" src="" alt="QR Code">
+                    <p>Scan this QR code at the venue</p>
+                </div>
+
+                <button class="download-btn" onclick="downloadTicket()">
+                    <i class="fas fa-download"></i> DOWNLOAD TICKET
+                </button>
+
+                <a href="my-tickets.html" class="tickets-link">
+                    <i class="fas fa-ticket-alt"></i> VIEW MY TICKETS
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Popup -->
+    <div class="popup" id="successPopup">
+        <div class="popup-content">
+            <i class="fas fa-check-circle"></i>
+            <h3>🎉 PAYMENT SUCCESSFUL!</h3>
+            <p>Your ticket is ready. You can download it or view in My Tickets.</p>
+            <button onclick="closePopup()">GOT IT</button>
+        </div>
+    </div>
+
+    <!-- Include jsPDF and html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            updateDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBc5PBzQQk-W1NDy5-DQ217QbvYsahtiOs",
+            authDomain: "bookmyevent-21cd8.firebaseapp.com",
+            projectId: "bookmyevent-21cd8",
+            storageBucket: "bookmyevent-21cd8.firebasestorage.app",
+            messagingSenderId: "535972128829",
+            appId: "1:535972128829:web:d07360b589ad13a8dfe254"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Get booking ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookingId = urlParams.get("bookingId");
+
+        // DOM Elements
+        const loadingState = document.getElementById('loadingState');
+        const paymentSection = document.getElementById('paymentSection');
+        const successSection = document.getElementById('successSection');
+        const eventInfo = document.getElementById('eventInfo');
+        const payAmount = document.getElementById('payAmount');
+        const payBtn = document.getElementById('payBtn');
+        const qrCode = document.getElementById('qrCode');
+        const successPopup = document.getElementById('successPopup');
+
+        // Payment method elements
+        const cardPayment = document.getElementById('cardPayment');
+        const upiPayment = document.getElementById('upiPayment');
+        const netbankingPayment = document.getElementById('netbankingPayment');
+        const cardDetails = document.getElementById('cardDetails');
+        const upiDetails = document.getElementById('upiDetails');
+        const netbankingDetails = document.getElementById('netbankingDetails');
+
+        let currentBooking = null;
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (bookingId) {
+                await loadBooking();
+            } else {
+                alert('No booking ID found');
+                window.location.href = 'home.html';
+            }
+        });
+
+        // Load booking details
+        async function loadBooking() {
+            try {
+                const bookingRef = doc(db, "bookings", bookingId);
+                const bookingSnap = await getDoc(bookingRef);
+
+                if (bookingSnap.exists()) {
+                    currentBooking = { id: bookingSnap.id, ...bookingSnap.data() };
+                    console.log('Booking loaded:', currentBooking);
+                    
+                    // Check if already paid
+                    if (currentBooking.status === 'paid' || currentBooking.paymentStatus === 'completed') {
+                        showSuccess();
+                    } else {
+                        displayPaymentDetails();
+                    }
+                } else {
+                    alert("Booking not found");
+                    window.location.href = 'home.html';
+                }
+            } catch (error) {
+                console.error("Error loading booking:", error);
+                alert("Error loading booking details");
+                window.location.href = 'home.html';
+            }
+        }
+
+        // Display payment details
+        function displayPaymentDetails() {
+            loadingState.style.display = 'none';
+            paymentSection.style.display = 'block';
+            
+            const eventName = currentBooking.eventName || currentBooking.eventTitle || 'Event';
+            const quantity = currentBooking.quantity || 1;
+            const price = currentBooking.ticketPrice || 0;
+            const totalPrice = currentBooking.price || (price * quantity);
+            const platformFee = totalPrice * 0.1;
+            const finalTotal = totalPrice + platformFee;
+            
+            eventInfo.innerHTML = `
+                <div class="event-name">${eventName}</div>
+                <div class="booking-details">
+                    <span class="detail-label">TICKET PRICE</span>
+                    <span class="detail-value">₹${price} × ${quantity}</span>
+                </div>
+                <div class="booking-details">
+                    <span class="detail-label">SUB TOTAL</span>
+                    <span class="detail-value">₹${totalPrice}</span>
+                </div>
+                <div class="booking-details">
+                    <span class="detail-label">PLATFORM FEE (10%)</span>
+                    <span class="detail-value">₹${platformFee.toFixed(2)}</span>
+                </div>
+                <div class="booking-details">
+                    <span class="detail-label">TOTAL</span>
+                    <span class="detail-value price">₹${finalTotal.toFixed(2)}</span>
+                </div>
+            `;
+            
+            payAmount.textContent = finalTotal.toFixed(2);
+        }
+
+        // Select payment method
+        window.selectPayment = function(method) {
+            // Update radio buttons
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+            
+            if (method === 'card') {
+                event.target.closest('.payment-option').classList.add('selected');
+                cardPayment.checked = true;
+                cardDetails.classList.add('show');
+                upiDetails.classList.remove('show');
+                netbankingDetails.classList.remove('show');
+            } else if (method === 'upi') {
+                event.target.closest('.payment-option').classList.add('selected');
+                upiPayment.checked = true;
+                upiDetails.classList.add('show');
+                cardDetails.classList.remove('show');
+                netbankingDetails.classList.remove('show');
+            } else if (method === 'netbanking') {
+                event.target.closest('.payment-option').classList.add('selected');
+                netbankingPayment.checked = true;
+                netbankingDetails.classList.add('show');
+                cardDetails.classList.remove('show');
+                upiDetails.classList.remove('show');
+            }
+        };
+
+        // Process payment
+        window.processPayment = async function() {
+            if (!currentBooking) return;
+            
+            // Show loading
+            payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
+            payBtn.disabled = true;
+            
+            // Simulate payment processing (2 seconds)
+            setTimeout(async () => {
+                try {
+                    // Update booking status in Firebase
+                    const bookingRef = doc(db, "bookings", bookingId);
+                    await updateDoc(bookingRef, {
+                        status: "paid",
+                        paymentStatus: "completed",
+                        paidAt: serverTimestamp()
+                    });
+                    
+                    // Also update tickets sold in event
+                    // This would be done here if needed
+                    
+                    // Show success
+                    showSuccess();
+                    
+                } catch (error) {
+                    console.error("Error updating payment:", error);
+                    alert("Payment failed. Please try again.");
+                    
+                    // Reset button
+                    payBtn.innerHTML = '<i class="fas fa-lock"></i> PAY ₹' + payAmount.textContent;
+                    payBtn.disabled = false;
+                }
+            }, 2000);
+        };
+
+        // Show success section
+        function showSuccess() {
+            paymentSection.style.display = 'none';
+            successSection.style.display = 'block';
+            
+            // Generate QR code with booking info
+            const qrData = JSON.stringify({
+                id: bookingId,
+                event: currentBooking.eventName || currentBooking.eventTitle,
+                tickets: currentBooking.quantity || 1
+            });
+            
+            qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
+            
+            // Show popup after a short delay
+            setTimeout(() => {
+                successPopup.style.display = 'flex';
+            }, 500);
+        }
+
+        // Close popup
+        window.closePopup = function() {
+            successPopup.style.display = 'none';
+        };
+
+        // Download ticket as PDF
+        window.downloadTicket = async function() {
+            const { jsPDF } = window.jspdf;
+            
+            // Create a simple ticket HTML
+            const ticketHTML = `
+                <div style="width: 350px; padding: 20px; background: #fff; border: 3px solid #000; text-align: center; font-family: Arial, sans-serif;">
+                    <h2 style="color: #5B1FA6; margin-bottom: 10px;">🎫 EVENT TICKET</h2>
+                    <img src="${qrCode.src}" style="width: 150px; height: 150px; margin: 10px auto; border: 2px solid #000; padding: 5px;">
+                    <p style="font-size: 18px; font-weight: bold; margin: 10px 0;">${currentBooking.eventName || currentBooking.eventTitle}</p>
+                    <p style="font-size: 14px; color: #666;">Booking ID: ${bookingId}</p>
+                    <p style="font-size: 14px;">Tickets: ${currentBooking.quantity || 1}</p>
+                    <p style="font-size: 14px;">Date: ${new Date().toLocaleDateString()}</p>
+                </div>
+            `;
+            
+            // Create a temporary div
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = ticketHTML;
+            document.body.appendChild(tempDiv);
+            
+            // Convert to canvas and PDF
+            const canvas = await html2canvas(tempDiv, { scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+            
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [canvas.width, canvas.height]
+            });
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+            pdf.save(`ticket_${bookingId}.pdf`);
+            
+            // Remove temporary div
+            document.body.removeChild(tempDiv);
+        };
+
+        console.log('%c💳 BookMyEvent - Payment Page', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
+    </script>
+</body>
+</html>

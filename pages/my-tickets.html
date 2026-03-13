@@ -1144,7 +1144,7 @@
             collection,
             query,
             where,
-            getDocs,
+            onSnapshot,
             doc,
             getDoc,
             orderBy
@@ -1191,6 +1191,8 @@
         let currentUser = null;
         let allBookings = [];
         let currentFilter = 'all';
+        let unsubscribeBookings = null;
+        let eventCache = new Map(); // Cache for event details
 
         // Category to default image mapping
         const categoryImages = {
@@ -1221,8 +1223,8 @@
                 dropdownUserName.textContent = user.displayName || 'Event Lover';
                 dropdownUserEmail.textContent = user.email;
                 
-                // Load user's bookings
-                await loadUserBookings();
+                // Load user's bookings with real-time updates
+                loadUserBookingsRealtime();
             } else {
                 // Redirect to login if not authenticated
                 window.location.href = 'login.html';
@@ -1251,47 +1253,86 @@
             }
         };
 
-        // Load user's bookings from Firebase
-        async function loadUserBookings() {
-            try {
-                // Get all bookings for this user
-                const bookingsQuery = query(
-                    collection(db, 'bookings'),
-                    where('userId', '==', currentUser.uid),
-                    orderBy('bookingDate', 'desc')
-                );
+        // Load user's bookings with real-time updates
+        function loadUserBookingsRealtime() {
+            // Show loading spinner
+            loadingSpinner.style.display = 'block';
+            ticketsGrid.style.display = 'none';
+            noTickets.style.display = 'none';
+            
+            // Create query for user's bookings
+            const bookingsQuery = query(
+                collection(db, 'bookings'),
+                where('userId', '==', currentUser.uid),
+                orderBy('bookingDate', 'desc')
+            );
+            
+            // Unsubscribe from previous listener if exists
+            if (unsubscribeBookings) {
+                unsubscribeBookings();
+            }
+            
+            // Set up real-time listener
+            unsubscribeBookings = onSnapshot(bookingsQuery, async (snapshot) => {
+                console.log('Bookings updated in real-time');
                 
-                const bookingsSnapshot = await getDocs(bookingsQuery);
+                // Clear current bookings
                 allBookings = [];
                 
-                for (const bookingDoc of bookingsSnapshot.docs) {
-                    const booking = { id: bookingDoc.id, ...bookingDoc.data() };
+                // Process each booking document
+                for (const doc of snapshot.docs) {
+                    const booking = { id: doc.id, ...doc.data() };
                     
-                    // Get event details
-                    try {
-                        const eventDoc = await getDoc(doc(db, 'events', booking.eventId));
-                        if (eventDoc.exists()) {
-                            booking.event = { id: eventDoc.id, ...eventDoc.data() };
+                    // Check if event details are in cache
+                    if (eventCache.has(booking.eventId)) {
+                        booking.event = eventCache.get(booking.eventId);
+                    } else {
+                        // Fetch event details
+                        try {
+                            const eventDoc = await getDoc(doc(db, 'events', booking.eventId));
+                            if (eventDoc.exists()) {
+                                const eventData = { id: eventDoc.id, ...eventDoc.data() };
+                                booking.event = eventData;
+                                eventCache.set(booking.eventId, eventData);
+                            }
+                        } catch (error) {
+                            console.warn('Could not load event details for booking:', booking.id);
                         }
-                    } catch (error) {
-                        console.warn('Could not load event details for booking:', booking.id);
                     }
                     
                     allBookings.push(booking);
                 }
                 
-                console.log(`Loaded ${allBookings.length} bookings`);
+                // Hide loading spinner
+                loadingSpinner.style.display = 'none';
+                
+                // Display tickets
                 displayTickets();
                 
-            } catch (error) {
-                console.error('Error loading bookings:', error);
+            }, (error) => {
+                console.error('Error in real-time listener:', error);
                 loadingSpinner.style.display = 'none';
-                noTickets.style.display = 'block';
-            }
+                showError('Failed to load tickets. Please refresh the page.');
+            });
+        }
+
+        // Show error message
+        function showError(message) {
+            ticketsGrid.style.display = 'none';
+            noTickets.style.display = 'block';
+            noTickets.innerHTML = `
+                <i class="fas fa-exclamation-circle" style="color: #dc3545;"></i>
+                <h2>OOPS!</h2>
+                <p>${message}</p>
+                <a href="home.html" class="browse-btn">
+                    <i class="fas fa-home"></i> GO HOME
+                </a>
+            `;
         }
 
         // Format date
         function formatDate(dateString) {
+            if (!dateString) return 'Date TBD';
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('en-US', options);
         }
@@ -1307,6 +1348,7 @@
 
         // Check if event is upcoming
         function isUpcoming(eventDate) {
+            if (!eventDate) return false;
             const eventDateTime = new Date(eventDate);
             const today = new Date();
             return eventDateTime >= today;
@@ -1314,8 +1356,6 @@
 
         // Display tickets based on filter
         function displayTickets() {
-            loadingSpinner.style.display = 'none';
-            
             if (allBookings.length === 0) {
                 ticketsGrid.style.display = 'none';
                 noTickets.style.display = 'block';
@@ -1323,20 +1363,31 @@
                 return;
             }
             
+            ticketsGrid.style.display = 'grid';
+            noTickets.style.display = 'none';
+            
             // Apply filter
             let filteredBookings = allBookings;
             
             if (currentFilter === 'upcoming') {
                 filteredBookings = allBookings.filter(booking => 
-                    booking.event && isUpcoming(booking.event.date)
+                    booking.event && isUpcoming(booking.event.date) && 
+                    (booking.status === 'paid' || booking.paymentStatus === 'completed')
                 );
             } else if (currentFilter === 'past') {
                 filteredBookings = allBookings.filter(booking => 
-                    booking.event && !isUpcoming(booking.event.date)
+                    booking.event && !isUpcoming(booking.event.date) &&
+                    (booking.status === 'paid' || booking.paymentStatus === 'completed')
                 );
             } else if (currentFilter === 'free') {
                 filteredBookings = allBookings.filter(booking => 
-                    booking.ticketPrice === 0
+                    booking.ticketPrice === 0 &&
+                    (booking.status === 'paid' || booking.paymentStatus === 'completed')
+                );
+            } else {
+                // 'all' - show only paid/completed bookings
+                filteredBookings = allBookings.filter(booking => 
+                    booking.status === 'paid' || booking.paymentStatus === 'completed'
                 );
             }
             
@@ -1485,7 +1536,7 @@
             if (navigator.share) {
                 navigator.share({
                     title: `My Ticket for ${event.title}`,
-                    text: `I've booked ${booking.quantity} ticket(s) for ${event.title}!`,
+                    text: `I've booked ${booking.quantity} ticket(s) for ${event.title}! Booking ID: ${bookingIdShort}`,
                     url: window.location.href
                 }).catch(console.error);
             } else {
@@ -1511,7 +1562,14 @@
             }
         });
 
-        console.log('%c🎫 BookMyEvent - My Tickets', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
+        // Cleanup listener on page unload
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeBookings) {
+                unsubscribeBookings();
+            }
+        });
+
+        console.log('%c🎫 BookMyEvent - My Tickets (Real-time)', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
     </script>
 </body>
 </html>
