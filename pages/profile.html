@@ -939,7 +939,7 @@
 
                         <div class="button-group">
                             <button class="btn btn-primary" id="saveInterestsBtn">
-                                <i class="fas fa-save"></i> SAVE INTERESTS
+                                <i class="fas fa-heart"></i> SAVE INTERESTS
                             </button>
                         </div>
                     </div>
@@ -992,6 +992,7 @@
             getFirestore,
             doc,
             getDoc,
+            setDoc,
             updateDoc,
             arrayUnion,
             serverTimestamp
@@ -1120,26 +1121,38 @@
                     checkProfileCompletion();
                 } else {
                     console.log('No profile document found, creating one...');
-                    // Create default profile
+                    // Create default profile using setDoc (not updateDoc)
                     userProfile = {
                         email: currentUser.email,
                         fullName: currentUser.displayName || '',
                         phone: '',
-                        age: '',
+                        age: null,
                         state: '',
                         city: '',
                         bio: '',
                         interests: [],
                         eventHistory: [],
-                        profileCompleted: false,
                         createdAt: serverTimestamp(),
                         updatedAt: serverTimestamp()
                     };
                     
-                    await updateDoc(userRef, userProfile);
+                    // Use setDoc to create the document
+                    await setDoc(userRef, userProfile);
+                    console.log('Profile created successfully');
+                    
+                    // Populate form with empty values
+                    fullName.value = currentUser.displayName || '';
+                    phone.value = '';
+                    age.value = '';
+                    state.value = '';
+                    city.value = '';
+                    bio.value = '';
                     
                     // Load empty interests
                     loadInterests([]);
+                    
+                    // Show success message
+                    showSuccess('Profile created successfully! Please complete your details.');
                 }
                 
             } catch (error) {
@@ -1182,7 +1195,7 @@
                     
                     row.innerHTML = `
                         <td><strong>${event.name}</strong></td>
-                        <td>$${event.price}</td>
+                        <td>₹${event.price}</td>
                         <td>${date}</td>
                     `;
                     historyBody.appendChild(row);
@@ -1279,7 +1292,6 @@
                     state: state.value,
                     city: city.value.trim(),
                     bio: bio.value.trim(),
-                    profileCompleted: true,
                     updatedAt: serverTimestamp()
                 };
                 
@@ -1373,7 +1385,7 @@
             }
         };
 
-        // Add event to history function
+        // Add event to history function (for use from other pages)
         window.addEventToHistory = async function(eventName, eventPrice) {
             if (!currentUser) return;
             
