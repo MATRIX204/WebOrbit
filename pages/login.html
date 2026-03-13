@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>BookMyEvent - Sign In</title>
-
+    
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <!-- Google Fonts - Figtree -->
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -28,9 +26,8 @@
             justify-content: center;
             background-color: #E3D1FF;
             position: relative;
-            padding: 30px 15px;
+            padding: 20px;
         }
-
 
         /* Background pattern */
         .bg-pattern {
@@ -39,11 +36,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: repeating-linear-gradient(45deg,
-                    rgba(91, 31, 166, 0.03) 0px,
-                    rgba(91, 31, 166, 0.03) 10px,
-                    rgba(197, 139, 255, 0.03) 10px,
-                    rgba(197, 139, 255, 0.03) 20px);
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(91, 31, 166, 0.03) 0px,
+                rgba(91, 31, 166, 0.03) 10px,
+                rgba(197, 139, 255, 0.03) 10px,
+                rgba(197, 139, 255, 0.03) 20px
+            );
             pointer-events: none;
             z-index: 1;
         }
@@ -54,24 +53,20 @@
             width: 100%;
             background-color: #5B1FA6;
             border: 4px solid #000;
-            box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.2);
             position: relative;
             z-index: 10;
-            margin: auto;
         }
-
 
         /* Content card with image and form side by side */
         .content {
             background-color: #FFFFFF;
             border: 4px solid #000;
-            margin: 15px;
+            margin: 20px;
             display: flex;
             overflow: hidden;
             position: relative;
-            border-radius: 6px;
         }
-
 
         /* Left side - Image */
         .login-image {
@@ -108,10 +103,9 @@
         /* Right side - Login Form */
         .login-form-section {
             flex: 1;
-            padding: 35px 30px;
+            padding: 40px 35px;
             background: #FFFFFF;
         }
-
 
         /* Back button */
         .back-btn {
@@ -436,16 +430,21 @@
             z-index: 20;
         }
 
-        .container .corner-tl {
+        .corner-tl {
             top: -3px;
             left: -3px;
+            border-right: none;
+            border-bottom: none;
+            background: linear-gradient(135deg, #5B1FA6, #7A2CCB);
         }
 
-        .container .corner-br {
+        .corner-br {
             bottom: -3px;
             right: -3px;
+            border-left: none;
+            border-top: none;
+            background: linear-gradient(135deg, #9C4DFF, #C58BFF);
         }
-
 
         /* Loading spinner */
         .fa-spinner {
@@ -453,13 +452,8 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Fade in animation */
@@ -472,7 +466,6 @@
                 opacity: 0;
                 transform: translateY(15px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -481,28 +474,20 @@
 
         /* Mobile responsive */
         @media screen and (max-width: 768px) {
-
-            body {
-                padding: 20px 10px;
-            }
-
             .content {
                 flex-direction: column;
-                margin: 10px;
             }
 
             .login-image {
-                min-height: 180px;
+                min-height: 200px;
                 border-right: none;
                 border-bottom: 4px solid #000;
             }
 
             .login-form-section {
-                padding: 25px 20px;
+                padding: 30px 25px;
             }
-
         }
-
 
         @media screen and (max-width: 480px) {
             .login-form-section {
@@ -518,17 +503,9 @@
             }
 
             .form-input {
-                width: 100%;
-                padding: 15px 18px 15px 45px;
-                font-family: 'Figtree', sans-serif;
-                font-size: 1rem;
-                border: 3px solid #000;
-                background: #FFFFFF;
-                box-shadow: 4px 4px 0 #E3D1FF;
-                transition: all 0.1s ease;
-                outline: none;
+                padding: 14px 15px 14px 40px;
+                font-size: 0.95rem;
             }
-
 
             .btn {
                 padding: 14px;
@@ -542,23 +519,20 @@
         }
     </style>
 </head>
-
 <body>
     <!-- Background pattern -->
     <div class="bg-pattern"></div>
 
+    <!-- Corner accents -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-br"></div>
+
     <!-- Main Container -->
     <div class="container">
-        <!-- Corner accents -->
-
-        <div class="corner corner-tl"></div>
-        <div class="corner corner-br"></div>
         <div class="content">
             <!-- Left side - Image -->
             <div class="login-image">
-                <img src="../assets/images/login.png" alt="BookMyEvent"
-                    onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22500%22 viewBox=%220 0 500 500%22><rect width=%22500%22 height=%22500%22 fill=%22%235B1FA6%22/><circle cx=%22250%22 cy=%22200%22 r=%2280%22 fill=%22%23E3D1FF%22/><circle cx=%22220%22 cy=%22180%22 r=%2210%22 fill=%22%23000%22/><circle cx=%22280%22 cy=%22180%22 r=%2210%22 fill=%22%23000%22/><path d=%22M200 240 Q250 280,300 240%22 stroke=%22%23000%22 stroke-width=%228%22 fill=%22none%22 stroke-linecap=%22round%22/><text x=%22250%22 y=%22350%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23FFFFFF%22 font-weight=%22bold%22>EVENTS</text></svg>'">
-
+                <img src="../assets/images/login.png" alt="BookMyEvent" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22500%22 viewBox=%220 0 500 500%22><rect width=%22500%22 height=%22500%22 fill=%22%235B1FA6%22/><circle cx=%22250%22 cy=%22200%22 r=%2280%22 fill=%22%23E3D1FF%22/><circle cx=%22220%22 cy=%22180%22 r=%2210%22 fill=%22%23000%22/><circle cx=%22280%22 cy=%22180%22 r=%2210%22 fill=%22%23000%22/><path d=%22M200 240 Q250 280,300 240%22 stroke=%22%23000%22 stroke-width=%228%22 fill=%22none%22 stroke-linecap=%22round%22/><text x=%22250%22 y=%22350%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23FFFFFF%22 font-weight=%22bold%22>EVENTS</text></svg>'">
                 <div class="image-overlay"></div>
             </div>
 
@@ -597,8 +571,7 @@
                         <label class="form-label">EMAIL ADDRESS</label>
                         <div class="input-wrapper">
                             <i class="fas fa-envelope input-icon"></i>
-                            <input type="email" class="form-input" id="email" placeholder="hello@bookmyevent.com"
-                                required>
+                            <input type="email" class="form-input" id="email" placeholder="hello@bookmyevent.com" required>
                         </div>
                     </div>
 
@@ -610,7 +583,7 @@
                             <i class="fas fa-eye toggle-password" id="togglePassword"></i>
                         </div>
                         <div class="forgot-password">
-                            <a href="./forgot-password.html" id="forgotPassword">FORGOT PASSWORD?</a>
+                            <a href="#" id="forgotPassword">FORGOT PASSWORD?</a>
                         </div>
                     </div>
 
@@ -656,13 +629,12 @@
     <script type="module">
         // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import {
-            getAuth,
+        import { 
+            getAuth, 
             signInWithEmailAndPassword,
             signInWithPopup,
             GoogleAuthProvider,
-            sendPasswordResetEmail,
-            fetchSignInMethodsForEmail
+            sendPasswordResetEmail
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // Firebase configuration
@@ -679,12 +651,16 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
+        
         // Configure Google Provider
         const provider = new GoogleAuthProvider();
         provider.setCustomParameters({
             prompt: 'select_account'
         });
+
+        // Admin credentials - UPDATED to match Firebase user
+        const ADMIN_EMAIL = 'admin@bookmyevent.com';  // Changed from $ to .com
+        const ADMIN_PASSWORD = 'admin@bookmyevent$';
 
         // DOM Elements
         const loginForm = document.getElementById('loginForm');
@@ -702,12 +678,8 @@
         const togglePassword = document.getElementById('togglePassword');
         const forgotPassword = document.getElementById('forgotPassword');
 
-        // Admin credentials (hardcoded - not in Firebase)
-        const ADMIN_EMAIL = 'admin@bookmyevent$';
-        const ADMIN_PASSWORD = 'admin@bookmyevent$';
-
         // Toggle password visibility
-        togglePassword.addEventListener('click', function () {
+        togglePassword.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             this.classList.toggle('fa-eye');
@@ -745,10 +717,42 @@
             }, 3000);
         }
 
+        // Clear all messages
+        function clearMessages() {
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            adminHint.style.display = 'none';
+        }
+
+        // Handle forgot password
+        forgotPassword.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                showError('PLEASE ENTER YOUR EMAIL ADDRESS');
+                return;
+            }
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showSuccess('PASSWORD RESET EMAIL SENT! CHECK YOUR INBOX.');
+            } catch (error) {
+                console.error('Password reset error:', error);
+                if (error.code === 'auth/user-not-found') {
+                    showError('NO ACCOUNT FOUND WITH THIS EMAIL');
+                } else {
+                    showError('FAILED TO SEND RESET EMAIL. TRY AGAIN.');
+                }
+            }
+        });
+
         // Email/Password Login (Regular users - uses Firebase)
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
+            clearMessages();
+            
             const email = emailInput.value.trim();
             const password = passwordInput.value.trim();
 
@@ -764,19 +768,23 @@
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log('Login successful:', userCredential.user.email);
-
+                
+                // Clear any admin flags when regular user logs in
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('isAdmin');
+                
                 showSuccess('LOGIN SUCCESSFUL! REDIRECTING...');
-
-                // Redirect to dashboard
+                
+                // Redirect to home page
                 setTimeout(() => {
                     window.location.href = 'home.html';
                 }, 1000);
-
+                
             } catch (error) {
                 console.error('Login error:', error);
-
+                
                 // Handle specific error codes
-                switch (error.code) {
+                switch(error.code) {
                     case 'auth/invalid-email':
                         showError('INVALID EMAIL FORMAT');
                         break;
@@ -792,7 +800,7 @@
                     default:
                         showError('LOGIN FAILED. PLEASE TRY AGAIN');
                 }
-
+                
                 // Reset button
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> SIGN IN';
                 loginBtn.disabled = false;
@@ -808,18 +816,22 @@
             try {
                 const result = await signInWithPopup(auth, provider);
                 console.log('Google login successful:', result.user.email);
-
+                
+                // Clear any admin flags
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('isAdmin');
+                
                 showSuccess('GOOGLE SIGN IN SUCCESSFUL!');
-
+                
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'home.html';
                 }, 1000);
-
+                
             } catch (error) {
                 console.error('Google login error:', error);
-
+                
                 // Handle specific Google errors
-                switch (error.code) {
+                switch(error.code) {
                     case 'auth/popup-blocked':
                         showError('POPUP WAS BLOCKED. PLEASE ALLOW POPUPS FOR THIS SITE.');
                         break;
@@ -827,78 +839,72 @@
                         showError('SIGN IN CANCELLED. PLEASE TRY AGAIN.');
                         break;
                     case 'auth/unauthorized-domain':
-                        showError('THIS DOMAIN IS NOT AUTHORIZED FOR GOOGLE SIGN IN. PLEASE ADD IT IN FIREBASE CONSOLE.');
-                        break;
-                    case 'auth/cancelled-popup-request':
-                        showError('MULTIPLE POPUP REQUESTS. PLEASE TRY AGAIN.');
+                        showError('THIS DOMAIN IS NOT AUTHORIZED FOR GOOGLE SIGN IN.');
                         break;
                     default:
-                        showError('GOOGLE SIGN IN FAILED. PLEASE TRY EMAIL SIGN IN INSTEAD.');
+                        showError('GOOGLE SIGN IN FAILED. PLEASE TRY EMAIL SIGN IN.');
                 }
-
+                
                 // Reset button
                 googleSignIn.innerHTML = 'CONTINUE WITH GOOGLE';
                 googleSignIn.disabled = false;
             }
         });
 
-        // ADMIN LOGIN - Hardcoded check (NO FIREBASE)
-        adminLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent any default form submission
+        // ADMIN LOGIN - Using Firebase Authentication
+        adminLoginBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // Get input values
+            const enteredEmail = emailInput.value ? emailInput.value.trim() : ADMIN_EMAIL; // Auto-fill if empty
+            const enteredPassword = passwordInput.value ? passwordInput.value.trim() : ADMIN_PASSWORD; // Auto-fill if empty
 
-            // Get input values and trim them
-            const enteredEmail = emailInput.value ? emailInput.value.trim() : '';
-            const enteredPassword = passwordInput.value ? passwordInput.value.trim() : '';
-
-            console.log('Admin login attempt:', {
-                enteredEmail,
-                enteredPassword,
-                expectedEmail: ADMIN_EMAIL,
-                expectedPassword: ADMIN_PASSWORD,
-                emailMatch: enteredEmail === ADMIN_EMAIL,
-                passwordMatch: enteredPassword === ADMIN_PASSWORD
-            });
-
-            // Check if fields are empty
-            if (!enteredEmail || !enteredPassword) {
-                showError('PLEASE ENTER ADMIN EMAIL AND PASSWORD');
-                return;
-            }
+            // Auto-fill if fields are empty
+            if (!emailInput.value) emailInput.value = ADMIN_EMAIL;
+            if (!passwordInput.value) passwordInput.value = ADMIN_PASSWORD;
 
             // Show loading state
             adminLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFYING...';
             adminLoginBtn.disabled = true;
 
-            // HARDCODED CHECK - No Firebase involved
-            if (enteredEmail === ADMIN_EMAIL && enteredPassword === ADMIN_PASSWORD) {
-                console.log('Admin login successful - hardcoded check');
-
+            try {
+                // Sign in to Firebase with admin credentials
+                const userCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
+                
+                console.log('Admin login successful via Firebase:', userCredential.user.email);
+                
                 // Set session storage for admin
                 sessionStorage.setItem('adminLoggedIn', 'true');
-                sessionStorage.setItem('isAdmin', 'true'); // Additional flag for admin
-
+                sessionStorage.setItem('isAdmin', 'true');
+                sessionStorage.setItem('adminEmail', ADMIN_EMAIL);
+                
                 showSuccess('ADMIN ACCESS GRANTED! REDIRECTING...');
-
+                
                 // Redirect to admin panel
                 setTimeout(() => {
                     window.location.href = 'admin.html';
                 }, 1000);
-            } else {
-                // Provide more specific error messages
-                if (enteredEmail !== ADMIN_EMAIL && enteredPassword !== ADMIN_PASSWORD) {
-                    showError('INVALID ADMIN CREDENTIALS - BOTH EMAIL AND PASSWORD ARE INCORRECT');
-                } else if (enteredEmail !== ADMIN_EMAIL) {
-                    showError('INVALID ADMIN EMAIL');
+                
+            } catch (error) {
+                console.error('Admin login error:', error);
+                
+                // Provide specific error messages
+                if (error.code === 'auth/user-not-found') {
+                    showError('ADMIN USER NOT FOUND IN FIREBASE. PLEASE CREATE THE USER FIRST.');
+                } else if (error.code === 'auth/wrong-password') {
+                    showError('INCORRECT ADMIN PASSWORD');
+                } else if (error.code === 'auth/too-many-requests') {
+                    showError('TOO MANY ATTEMPTS. TRY AGAIN LATER.');
                 } else {
-                    showError('INVALID ADMIN PASSWORD');
+                    showError('ADMIN LOGIN FAILED: ' + error.message);
                 }
-
+                
                 adminLoginBtn.innerHTML = '<i class="fas fa-user-shield"></i> ADMIN LOGIN';
                 adminLoginBtn.disabled = false;
             }
         });
 
-        // Auto-fill admin credentials when hovering over admin button (optional but helpful)
+        // Auto-fill admin credentials on hover
         adminLoginBtn.addEventListener('mouseenter', () => {
             if (!emailInput.value && !passwordInput.value) {
                 emailInput.value = ADMIN_EMAIL;
@@ -907,80 +913,14 @@
             }
         });
 
-        // Also add a double-click feature for admin login
+        // Double-click to auto-fill admin credentials
         adminLoginBtn.addEventListener('dblclick', () => {
             emailInput.value = ADMIN_EMAIL;
             passwordInput.value = ADMIN_PASSWORD;
             showAdminHint('Admin credentials auto-filled!');
         });
 
-        // Add this helper function at the beginning of your script
-        function clearMessages() {
-            errorMessage.style.display = 'none';
-            successMessage.style.display = 'none';
-            adminHint.style.display = 'none';
-        }
-
-        // Add this to ensure proper form handling
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearMessages(); // Clear any existing messages
-
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-
-            if (!email || !password) {
-                showError('PLEASE FILL IN ALL FIELDS');
-                return;
-            }
-
-            // Show loading state
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SIGNING IN...';
-            loginBtn.disabled = true;
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('Login successful:', userCredential.user.email);
-
-                // Clear any admin flags when regular user logs in
-                sessionStorage.removeItem('adminLoggedIn');
-                sessionStorage.removeItem('isAdmin');
-
-                showSuccess('LOGIN SUCCESSFUL! REDIRECTING...');
-
-                // Redirect to dashboard
-                setTimeout(() => {
-                    window.location.href = 'home.html';
-                }, 1000);
-
-            } catch (error) {
-                console.error('Login error:', error);
-
-                // Handle specific error codes
-                switch (error.code) {
-                    case 'auth/invalid-email':
-                        showError('INVALID EMAIL FORMAT');
-                        break;
-                    case 'auth/user-not-found':
-                        showError('NO ACCOUNT FOUND WITH THIS EMAIL');
-                        break;
-                    case 'auth/wrong-password':
-                        showError('INCORRECT PASSWORD');
-                        break;
-                    case 'auth/too-many-requests':
-                        showError('TOO MANY ATTEMPTS. TRY AGAIN LATER');
-                        break;
-                    default:
-                        showError('LOGIN FAILED. PLEASE TRY AGAIN');
-                }
-
-                // Reset button
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> SIGN IN';
-                loginBtn.disabled = false;
-            }
-        });
-
-        // Add this to handle the case where admin login is attempted from empty fields
+        // Focus handler for admin hint
         adminLoginBtn.addEventListener('focus', () => {
             if (!emailInput.value || !passwordInput.value) {
                 showAdminHint('Enter admin credentials or hover to auto-fill');
@@ -989,11 +929,10 @@
 
         // Console welcome with clear admin credentials
         console.log('%c🔐 BookMyEvent - Secure Login Portal', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
-        console.log('%c📍 Admin Login (Hardcoded - Not in Firebase)', 'color: #FF0000; font-size: 12px; font-weight: bold;');
-        console.log('%c📍 Admin Email: admin@bookmyevent$', 'color: #FF0000; font-size: 14px; font-weight: bold; background: #FFE5E5; padding: 2px 5px;');
-        console.log('%c📍 Admin Password: admin@bookmyevent$', 'color: #FF0000; font-size: 14px; font-weight: bold; background: #FFE5E5; padding: 2px 5px;');
-        console.log('%c📍 To use admin login: Enter the credentials above or hover over the ADMIN LOGIN button to auto-fill', 'color: #FFA500; font-size: 12px;');
+        console.log('%c📍 Admin Login (Firebase Auth)', 'color: #28a745; font-size: 12px; font-weight: bold;');
+        console.log('%c📍 Admin Email: admin@bookmyevent.com', 'color: #28a745; font-size: 14px; font-weight: bold; background: #E3FFE5; padding: 2px 5px;');
+        console.log('%c📍 Admin Password: admin@bookmyevent$', 'color: #28a745; font-size: 14px; font-weight: bold; background: #E3FFE5; padding: 2px 5px;');
+        console.log('%c📍 Click ADMIN LOGIN button to authenticate with Firebase', 'color: #FFA500; font-size: 12px;');
     </script>
 </body>
-
 </html>

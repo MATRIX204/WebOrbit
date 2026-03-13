@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
+        /* Your existing styles remain exactly the same */
         * {
             margin: 0;
             padding: 0;
@@ -26,13 +27,11 @@
             color: #ffffff;
         }
 
-        /* Main container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             background: #2d2d2d;
             border: 1px solid #404040;
@@ -75,10 +74,22 @@
             letter-spacing: 1px;
             border: 1px solid #404040;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .admin-badge i {
             margin-right: 8px;
+        }
+
+        .mode-badge {
+            background: #ffc107;
+            color: #1a1a1a;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
         .back-btn {
@@ -101,7 +112,6 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
 
-        /* Form Container */
         .form-container {
             background: #2d2d2d;
             border: 1px solid #404040;
@@ -123,7 +133,6 @@
             font-size: 1rem;
         }
 
-        /* Platform Fee Message */
         .fee-message {
             background: #1a1a1a;
             border: 1px solid #404040;
@@ -151,7 +160,31 @@
             margin-left: 5px;
         }
 
-        /* Form Grid */
+        .auth-status {
+            background: rgba(23, 162, 184, 0.2);
+            border: 1px solid #17a2b8;
+            color: #17a2b8;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .auth-status.success {
+            background: rgba(40, 167, 69, 0.2);
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+        .auth-status.error {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -217,7 +250,6 @@
             color: #ffffff;
         }
 
-        /* Ticket Type Toggle */
         .ticket-type-group {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -250,7 +282,6 @@
             transform: translateY(-2px);
         }
 
-        /* Price Field */
         .price-field {
             display: none;
         }
@@ -259,7 +290,6 @@
             display: block;
         }
 
-        /* Submit Button */
         .submit-btn {
             width: 100%;
             padding: 18px;
@@ -293,7 +323,6 @@
             transform: none;
         }
 
-        /* Message */
         .message {
             padding: 16px;
             margin-bottom: 25px;
@@ -321,7 +350,6 @@
             font-size: 1.3rem;
         }
 
-        /* Section Headers */
         .section-header {
             margin: 25px 0 15px;
             padding-bottom: 10px;
@@ -336,7 +364,6 @@
             color: #9C4DFF;
         }
 
-        /* Mobile responsive */
         @media screen and (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -372,6 +399,7 @@
             </div>
             <div class="admin-badge">
                 <i class="fas fa-calendar-plus"></i> CREATE EVENT
+                <span class="mode-badge" id="modeBadge">CONNECTING...</span>
             </div>
             <a href="admin.html" class="back-btn">
                 <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
@@ -387,6 +415,12 @@
             <div class="fee-message">
                 <i class="fas fa-info-circle"></i>
                 <p><strong>PLATFORM FEE:</strong> <span>10%</span> on each ticket sold will be deducted as service charge</p>
+            </div>
+
+            <!-- Auth Status -->
+            <div class="auth-status" id="authStatus">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <span id="authStatusText">Connecting to Firebase...</span>
             </div>
 
             <!-- Message Container -->
@@ -590,15 +624,11 @@
             getFirestore, 
             collection, 
             addDoc,
-            serverTimestamp,
-            getDocs,
-            query,
-            where
+            serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { 
             getAuth, 
-            signInWithEmailAndPassword,
-            onAuthStateChanged 
+            signInWithEmailAndPassword
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // Firebase configuration
@@ -617,9 +647,9 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Admin credentials
-        const ADMIN_EMAIL = 'admin@bookmyevent$';
-        const ADMIN_PASSWORD = 'admin@bookmyevent$';
+        // Admin credentials - UPDATED to match your Firebase user
+        const ADMIN_EMAIL = 'admin@bookmyevent.com';  // Changed from $ to .com
+        const ADMIN_PASSWORD = 'admin@bookmyevent$';   // Password remains the same
 
         // Form elements
         const eventForm = document.getElementById('eventForm');
@@ -628,50 +658,74 @@
         const messageText = document.getElementById('messageText');
         const messageIcon = document.getElementById('messageIcon');
         const priceField = document.getElementById('priceField');
+        const authStatus = document.getElementById('authStatus');
+        const authStatusText = document.getElementById('authStatusText');
+        const modeBadge = document.getElementById('modeBadge');
 
         // Set default date to today
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('date').min = today;
 
-        // Check authentication and login if needed
-        async function ensureAuthenticated() {
-            return new Promise((resolve, reject) => {
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        console.log('Already authenticated as:', user.email);
-                        if (user.email === ADMIN_EMAIL) {
-                            resolve(user);
-                        } else {
-                            // Wrong user, sign out
-                            await auth.signOut();
-                            reject('Not admin user');
-                        }
-                    } else {
-                        // Check session storage for admin flag
-                        const isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
-                        
-                        if (isAdminLoggedIn) {
-                            try {
-                                // Try to sign in with admin credentials
-                                console.log('Attempting admin sign in...');
-                                const userCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
-                                console.log('Admin signed in successfully:', userCredential.user.email);
-                                resolve(userCredential.user);
-                            } catch (error) {
-                                console.error('Auto sign-in failed:', error);
-                                // If sign-in fails, still allow form submission with session storage
-                                // The Firestore write might still work if rules are permissive
-                                console.log('Proceeding with session storage only');
-                                resolve({ email: ADMIN_EMAIL, isMock: true });
-                            }
-                        } else {
-                            // No admin session, redirect to login
-                            window.location.href = 'login.html';
-                            reject('No admin session');
-                        }
-                    }
-                });
-            });
+        // Global state
+        let isFirebaseAuthenticated = false;
+
+        // Update auth status UI
+        function updateAuthStatus(status, message) {
+            authStatus.className = 'auth-status ' + status;
+            authStatusText.textContent = message;
+            
+            if (status === 'success') {
+                modeBadge.textContent = 'LIVE';
+                modeBadge.style.background = '#28a745';
+                isFirebaseAuthenticated = true;
+            } else if (status === 'error') {
+                modeBadge.textContent = 'ERROR';
+                modeBadge.style.background = '#dc3545';
+                isFirebaseAuthenticated = false;
+            } else {
+                modeBadge.textContent = 'CONNECTING';
+                modeBadge.style.background = '#ffc107';
+            }
+        }
+
+        // Authenticate with Firebase
+        async function authenticateWithFirebase() {
+            // Check if we have admin session
+            const isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+            
+            if (!isAdminLoggedIn) {
+                updateAuthStatus('error', 'No admin session. Please login first.');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return false;
+            }
+
+            try {
+                console.log('Attempting to sign in to Firebase with:', ADMIN_EMAIL);
+                
+                // Try to sign in to Firebase
+                const userCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
+                
+                console.log('Firebase authenticated successfully:', userCredential.user.email);
+                updateAuthStatus('success', '✅ Connected to Firebase as ' + userCredential.user.email);
+                return true;
+                
+            } catch (error) {
+                console.error('Firebase authentication failed:', error);
+                
+                if (error.code === 'auth/user-not-found') {
+                    updateAuthStatus('error', '❌ Admin user not found in Firebase. Please create user: ' + ADMIN_EMAIL);
+                } else if (error.code === 'auth/wrong-password') {
+                    updateAuthStatus('error', '❌ Wrong password. Please check admin credentials.');
+                } else if (error.code === 'auth/too-many-requests') {
+                    updateAuthStatus('error', '❌ Too many failed attempts. Please try again later.');
+                } else {
+                    updateAuthStatus('error', '❌ Firebase connection failed: ' + error.message);
+                }
+                
+                return false;
+            }
         }
 
         // Ticket type buttons
@@ -718,26 +772,22 @@
                 }
             }
 
-            // Validate email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(formData.organizerEmail)) {
                 showMessage('error', 'PLEASE ENTER A VALID EMAIL ADDRESS');
                 return false;
             }
 
-            // Validate phone (simplified for demo)
             if (formData.organizerPhone.length < 10) {
                 showMessage('error', 'PLEASE ENTER A VALID PHONE NUMBER');
                 return false;
             }
 
-            // Validate ticket price for paid events
             if (formData.ticketType !== 'Free' && (!formData.ticketPrice || formData.ticketPrice <= 0)) {
                 showMessage('error', 'PLEASE ENTER A VALID TICKET PRICE');
                 return false;
             }
 
-            // Validate total tickets
             if (formData.totalTickets < 1) {
                 showMessage('error', 'TOTAL TICKETS MUST BE AT LEAST 1');
                 return false;
@@ -747,94 +797,55 @@
         }
 
         // Create event in Firestore
-        async function createEvent(formData) {
+        async function createEventInFirestore(formData) {
             try {
-                // Ensure we're authenticated
-                const user = await ensureAuthenticated();
-                
-                // Prepare event data
                 const eventData = {
-                    // Basic Info
                     title: formData.title,
                     category: formData.category,
                     tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
                     description: formData.description,
-                    
-                    // Date & Time
                     date: formData.date,
                     startTime: formData.startTime,
                     endTime: formData.endTime,
-                    
-                    // Location
                     venueName: formData.venueName,
                     city: formData.city,
                     fullAddress: formData.fullAddress,
                     googleMapLocation: formData.googleMapLocation || '',
-                    
-                    // Ticket Info
                     ticketType: formData.ticketType,
-                    ticketPrice: formData.ticketType === 'Free' ? 0 : (formData.ticketPrice || 0),
+                    ticketPrice: formData.ticketType === 'Free' ? 0 : parseFloat(formData.ticketPrice || 0),
                     totalTickets: parseInt(formData.totalTickets),
                     ticketsPerUser: formData.ticketsPerUser ? parseInt(formData.ticketsPerUser) : null,
-                    
-                    // Organizer Info
                     organizerName: formData.organizerName,
                     organizerEmail: formData.organizerEmail,
                     organizerPhone: formData.organizerPhone,
-                    
-                    // Rules & Policies
                     eventRules: formData.eventRules,
                     ageRestriction: formData.ageRestriction || 'All ages',
                     refundPolicy: formData.refundPolicy || 'No refund policy specified',
-                    
-                    // Image
                     posterImage: formData.posterImage || '',
-                    
-                    // System fields
                     status: 'active',
                     ticketsSold: 0,
                     revenue: 0,
-                    platformFee: 10, // 10% platform fee
+                    platformFee: 10,
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),
-                    createdBy: user?.email || 'admin',
-                    createdById: user?.uid || 'admin',
+                    createdBy: ADMIN_EMAIL,
                     isActive: true
                 };
 
-                console.log('Attempting to create event:', eventData);
-
-                // Add to Firestore
-                const docRef = await addDoc(collection(db, 'events'), eventData);
+                console.log('Saving to Firestore:', eventData);
                 
-                console.log('Event created successfully with ID:', docRef.id);
-                return { success: true, id: docRef.id };
+                const docRef = await addDoc(collection(db, 'events'), eventData);
+                console.log('Firestore save successful! Event ID:', docRef.id);
+                
+                return { 
+                    success: true, 
+                    id: docRef.id,
+                    message: '✅ EVENT CREATED SUCCESSFULLY IN FIREBASE!'
+                };
                 
             } catch (error) {
-                console.error('Error creating event:', error);
-                
-                // If Firestore fails, save to localStorage as backup
-                try {
-                    const localEvents = JSON.parse(localStorage.getItem('backup_events') || '[]');
-                    const backupEvent = {
-                        ...formData,
-                        id: 'local_' + Date.now(),
-                        createdAt: new Date().toISOString(),
-                        status: 'active',
-                        ticketsSold: 0
-                    };
-                    localEvents.push(backupEvent);
-                    localStorage.setItem('backup_events', JSON.stringify(localEvents));
-                    
-                    return { 
-                        success: true, 
-                        id: backupEvent.id,
-                        message: 'Event saved locally (Firestore unavailable)'
-                    };
-                } catch (backupError) {
-                    console.error('Backup save failed:', backupError);
-                    throw error;
-                }
+                console.error('Firestore error:', error);
+                throw error;
             }
         }
 
@@ -873,42 +884,44 @@
                 return;
             }
 
+            // Check if authenticated
+            if (!isFirebaseAuthenticated) {
+                showMessage('error', 'Not connected to Firebase. Please refresh the page.');
+                return;
+            }
+
             // Show loading state
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CREATING EVENT...';
             submitBtn.disabled = true;
 
             try {
-                // Create event
-                const result = await createEvent(formData);
+                // Create event in Firestore
+                const result = await createEventInFirestore(formData);
                 
-                if (result.success) {
-                    // Show success message
-                    showMessage('success', result.message || 'EVENT CREATED SUCCESSFULLY! Redirecting to dashboard...');
+                // Show success message
+                showMessage('success', result.message);
 
-                    // Reset form
-                    eventForm.reset();
-                    document.getElementById('ticketType').value = 'Free';
-                    document.querySelectorAll('.ticket-type-btn')[0].classList.add('active');
-                    document.querySelectorAll('.ticket-type-btn')[1].classList.remove('active');
-                    document.querySelectorAll('.ticket-type-btn')[2].classList.remove('active');
-                    priceField.classList.remove('visible');
+                // Reset form
+                eventForm.reset();
+                document.getElementById('ticketType').value = 'Free';
+                document.querySelectorAll('.ticket-type-btn')[0].classList.add('active');
+                document.querySelectorAll('.ticket-type-btn')[1].classList.remove('active');
+                document.querySelectorAll('.ticket-type-btn')[2].classList.remove('active');
+                priceField.classList.remove('visible');
 
-                    // Redirect to admin dashboard after 2 seconds
-                    setTimeout(() => {
-                        window.location.href = 'admin.html';
-                    }, 2000);
-                }
+                // Redirect to admin dashboard after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 2000);
 
             } catch (error) {
                 console.error('Error in form submission:', error);
                 
-                let errorMessage = 'FAILED TO CREATE EVENT';
+                let errorMessage = 'FAILED TO CREATE EVENT: ';
                 if (error.code === 'permission-denied') {
-                    errorMessage = 'PERMISSION DENIED. PLEASE CHECK FIREBASE RULES.';
-                } else if (error.code === 'unauthenticated') {
-                    errorMessage = 'NOT AUTHENTICATED. PLEASE LOGIN AGAIN.';
+                    errorMessage += 'Permission denied. Check Firebase Rules.';
                 } else {
-                    errorMessage += ': ' + error.message;
+                    errorMessage += error.message;
                 }
                 
                 showMessage('error', errorMessage);
@@ -919,15 +932,12 @@
             }
         });
 
-        // Initialize - check authentication on page load
-        ensureAuthenticated().then(user => {
-            console.log('Event publisher initialized for:', user.email);
-        }).catch(error => {
-            console.error('Authentication failed:', error);
-        });
+        // Initialize - authenticate on page load
+        authenticateWithFirebase();
 
         // Console welcome
-        console.log('%c📅 BookMyEvent - Event Creator', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
+        console.log('%c📅 BookMyEvent - Event Creator (Firebase Mode)', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
+        console.log('Using admin email:', ADMIN_EMAIL);
     </script>
 </body>
 </html>

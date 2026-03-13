@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>BookMyEvent - Event Details</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Figtree -->
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Figtree', sans-serif;
+            background: linear-gradient(135deg, #f5f0ff 0%, #e9d9ff 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 30% 40%, rgba(91, 31, 166, 0.03) 0%, transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(156, 77, 255, 0.03) 0%, transparent 40%),
+                repeating-linear-gradient(45deg, rgba(91, 31, 166, 0.02) 0px, rgba(91, 31, 166, 0.02) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        .content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 0;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .logo-text .book {
+            color: #5B1FA6;
+            background: #FFFFFF;
+            padding: 8px 12px;
+            border: 3px solid #000;
+            display: inline-block;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+        }
+
+        .logo-text .my {
+            color: #FFFFFF;
+            background: linear-gradient(135deg, #7A2CCB, #9C4DFF);
+            padding: 8px 12px;
+            border: 3px solid #000;
+            display: inline-block;
+            margin: 0 5px;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+        }
+
+        .logo-text .event {
+            color: #FFFFFF;
+            background: #5B1FA6;
+            padding: 8px 12px;
+            border: 3px solid #000;
+            display: inline-block;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 25px;
+            background: #FFFFFF;
+            border: 3px solid #000;
+            font-weight: 700;
+            text-decoration: none;
+            color: #5B1FA6;
+            box-shadow: 5px 5px 0 #000;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-login {
+            padding: 12px 28px;
+            background: #FFFFFF;
+            border: 3px solid #000;
+            font-weight: 700;
+            text-decoration: none;
+            color: #5B1FA6;
+            box-shadow: 5px 5px 0 #000;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .btn-login:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .btn-signup {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border: 3px solid #000;
+            font-weight: 700;
+            text-decoration: none;
+            color: #FFFFFF;
+            box-shadow: 5px 5px 0 #000;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .btn-signup:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* User Menu */
+        .user-menu {
+            position: relative;
+            display: none;
+        }
+
+        .user-menu.active {
+            display: block;
+        }
+
+        .user-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            border-radius: 50%;
+        }
+
+        .user-icon:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .user-icon i {
+            font-size: 2rem;
+            color: #FFFFFF;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 65px;
+            right: 0;
+            width: 260px;
+            background: #FFFFFF;
+            border: 3px solid #000;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 20px;
+            border-bottom: 2px solid #E3D1FF;
+            background: linear-gradient(135deg, #f9f5ff, #f0e8ff);
+        }
+
+        .dropdown-header .user-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #5B1FA6;
+        }
+
+        .dropdown-header .user-email {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .dropdown-item {
+            padding: 15px 20px;
+            border-bottom: 2px solid #E3D1FF;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F0FF;
+        }
+
+        .dropdown-item i {
+            color: #5B1FA6;
+            width: 25px;
+            font-size: 1.1rem;
+        }
+
+        .dropdown-item span {
+            font-weight: 600;
+            color: #000;
+        }
+
+        /* Event Details Container */
+        .event-details-container {
+            background: #FFFFFF;
+            border: 4px solid #000;
+            box-shadow: 15px 15px 0 rgba(0,0,0,0.1);
+            margin: 30px 0 50px;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        /* Event Header Image */
+        .event-header-image {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid #000;
+        }
+
+        .event-header-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .event-header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(91,31,166,0.7) 0%, rgba(156,77,255,0.3) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 50px;
+        }
+
+        .event-badge-large {
+            background: #FFD700;
+            border: 3px solid #000;
+            padding: 15px 30px;
+            font-weight: 900;
+            font-size: 1.5rem;
+            box-shadow: 10px 10px 0 #000;
+            margin-bottom: 20px;
+            display: inline-block;
+            border-radius: 15px;
+        }
+
+        /* Event Content */
+        .event-content {
+            padding: 50px;
+        }
+
+        .event-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: #000;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .event-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 1000px) {
+            .event-meta-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .event-meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .meta-item {
+            background: #F5F0FF;
+            border: 3px solid #000;
+            padding: 20px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        .meta-item i {
+            font-size: 2rem;
+            color: #5B1FA6;
+            margin-bottom: 10px;
+        }
+
+        .meta-item .meta-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .meta-item .meta-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #000;
+        }
+
+        /* Event Description */
+        .event-description {
+            background: #F5F0FF;
+            border: 3px solid #000;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        .event-description h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #5B1FA6;
+        }
+
+        .event-description p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Event Rules & Policies */
+        .rules-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .rules-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .rules-box {
+            background: #F5F0FF;
+            border: 3px solid #000;
+            padding: 30px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        .rules-box h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #5B1FA6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rules-box ul {
+            list-style: none;
+        }
+
+        .rules-box ul li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .rules-box ul li i {
+            color: #5B1FA6;
+            width: 25px;
+        }
+
+        /* Ticket Box */
+        .ticket-box {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border: 4px solid #000;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 15px 15px 0 rgba(0,0,0,0.2);
+            border-radius: 20px;
+        }
+
+        .ticket-box h3 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FFFFFF;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 0 #000;
+        }
+
+        .ticket-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .price-info {
+            background: #FFFFFF;
+            border: 3px solid #000;
+            padding: 20px 40px;
+            box-shadow: 8px 8px 0 #000;
+            border-radius: 15px;
+        }
+
+        .price-info .price-label {
+            font-size: 1rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .price-info .price-value {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #5B1FA6;
+        }
+
+        .price-info .price-value.free {
+            color: #28a745;
+        }
+
+        .price-info .price-value small {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .ticket-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .ticket-stat {
+            background: #FFFFFF;
+            border: 3px solid #000;
+            padding: 15px 25px;
+            text-align: center;
+            box-shadow: 5px 5px 0 #000;
+            border-radius: 12px;
+        }
+
+        .ticket-stat .stat-number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #5B1FA6;
+        }
+
+        .ticket-stat .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .book-btn {
+            padding: 25px 50px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: 4px solid #000;
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: #000;
+            box-shadow: 12px 12px 0 #000;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            border-radius: 15px;
+        }
+
+        .book-btn:hover {
+            transform: translate(6px, 6px);
+            box-shadow: 6px 6px 0 #000;
+        }
+
+        .book-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 12px 12px 0 #000;
+        }
+
+        .book-btn i {
+            font-size: 1.8rem;
+        }
+
+        /* Quantity Selector */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #FFFFFF;
+            border: 3px solid #000;
+            padding: 10px;
+            box-shadow: 5px 5px 0 #000;
+            border-radius: 12px;
+        }
+
+        .quantity-btn {
+            width: 50px;
+            height: 50px;
+            background: #F5F0FF;
+            border: 2px solid #000;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            border-radius: 10px;
+        }
+
+        .quantity-btn:hover {
+            background: #E3D1FF;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            font-family: 'Figtree', sans-serif;
+        }
+
+        /* Total Price */
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #5B1FA6;
+        }
+
+        /* Organizer Info */
+        .organizer-section {
+            background: #F5F0FF;
+            border: 3px solid #000;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        .organizer-section h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #5B1FA6;
+        }
+
+        .organizer-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .organizer-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .organizer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .organizer-item i {
+            font-size: 1.3rem;
+            color: #5B1FA6;
+        }
+
+        .organizer-item span {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            text-align: center;
+            padding: 100px;
+        }
+
+        .loading-spinner i {
+            font-size: 4rem;
+            color: #5B1FA6;
+            margin-bottom: 20px;
+        }
+
+        .fa-spinner {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error Container */
+        .error-container {
+            text-align: center;
+            padding: 100px;
+            background: #FFFFFF;
+            border: 4px solid #000;
+            box-shadow: 15px 15px 0 rgba(0,0,0,0.1);
+            margin: 50px 0;
+            border-radius: 20px;
+        }
+
+        .error-container i {
+            font-size: 5rem;
+            color: #dc3545;
+            margin-bottom: 30px;
+        }
+
+        .error-container h2 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .error-container p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .error-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border: 3px solid #000;
+            font-weight: 700;
+            text-decoration: none;
+            color: #FFFFFF;
+            box-shadow: 8px 8px 0 #000;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+            border-radius: 12px;
+        }
+
+        .error-btn:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        /* Login Dialog */
+        .login-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .dialog-content {
+            background: #FFFFFF;
+            border: 4px solid #000;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 20px 20px 0 rgba(0,0,0,0.2);
+            border-radius: 20px;
+        }
+
+        .dialog-content i {
+            font-size: 4rem;
+            color: #5B1FA6;
+            margin-bottom: 20px;
+        }
+
+        .dialog-content h3 {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .dialog-content p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .dialog-btn {
+            padding: 15px 30px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 3px solid #000;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            flex: 1;
+            border-radius: 10px;
+        }
+
+        .dialog-btn.primary {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            color: #FFFFFF;
+            box-shadow: 5px 5px 0 #000;
+        }
+
+        .dialog-btn.secondary {
+            background: #FFFFFF;
+            color: #5B1FA6;
+            box-shadow: 5px 5px 0 #000;
+        }
+
+        .dialog-btn:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* Booking Success Dialog */
+        .success-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .success-content {
+            background: #FFFFFF;
+            border: 4px solid #28a745;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 20px 20px 0 rgba(0,0,0,0.2);
+            border-radius: 20px;
+        }
+
+        .success-content i {
+            font-size: 5rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .success-content h3 {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: #28a745;
+        }
+
+        .success-content p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .booking-id {
+            background: #F5F0FF;
+            border: 2px solid #000;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .success-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            border: 3px solid #000;
+            font-weight: 700;
+            text-decoration: none;
+            color: #FFFFFF;
+            box-shadow: 8px 8px 0 #000;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            border-radius: 12px;
+        }
+
+        .success-btn:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        /* Footer */
+        .footer {
+            background: #5B1FA6;
+            padding: 60px 0 30px;
+            margin-top: 80px;
+            color: #FFFFFF;
+            border-top: 4px solid #000;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 1000px) {
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer-col h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 4px;
+            background: #FFFFFF;
+            border: 2px solid #000;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 15px;
+        }
+
+        .footer-col ul li a {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .footer-col ul li a:hover {
+            transform: translateX(8px);
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .footer-col ul li i {
+            width: 22px;
+            font-size: 1.1rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 2px solid rgba(255,255,255,0.2);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .footer-bottom i {
+            color: #FFD700;
+            margin: 0 3px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                padding: 0 20px;
+            }
+
+            .logo-text {
+                font-size: 1.6rem;
+            }
+
+            .event-header-image {
+                height: 350px;
+            }
+
+            .event-header-overlay {
+                padding: 30px;
+            }
+
+            .event-badge-large {
+                padding: 10px 20px;
+                font-size: 1.2rem;
+            }
+
+            .event-title {
+                font-size: 2.5rem;
+            }
+
+            .event-content {
+                padding: 30px;
+            }
+
+            .ticket-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .book-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .auth-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-login, .btn-signup {
+                flex: 1;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 1.3rem;
+            }
+
+            .event-title {
+                font-size: 2rem;
+            }
+
+            .event-content {
+                padding: 20px;
+            }
+
+            .price-info .price-value {
+                font-size: 2.5rem;
+            }
+
+            .book-btn {
+                padding: 20px 30px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <div class="container">
+        <div class="content">
+            <!-- Header -->
+            <div class="header">
+                <a href="home.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> BACK TO HOME
+                </a>
+                
+                <div class="logo-text">
+                    <span class="book">BOOK</span>
+                    <span class="my">MY</span>
+                    <span class="event">EVENT</span>
+                </div>
+                
+                <!-- Auth Buttons -->
+                <div class="auth-buttons" id="authButtons">
+                    <a href="login.html" class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i> SIGN IN
+                    </a>
+                    <a href="signup.html" class="btn-signup">
+                        <i class="fas fa-user-plus"></i> SIGN UP
+                    </a>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="user-menu" id="userMenu">
+                    <div class="user-icon" id="userMenuBtn">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-name" id="dropdownUserName">Loading...</div>
+                            <div class="user-email" id="dropdownUserEmail">Loading...</div>
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='profile.html'">
+                            <i class="fas fa-user"></i>
+                            <span>My Profile</span>
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='my-tickets.html'">
+                            <i class="fas fa-ticket-alt"></i>
+                            <span>My Tickets</span>
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='saved-events.html'">
+                            <i class="fas fa-heart"></i>
+                            <span>Saved Events</span>
+                        </div>
+                        <div class="dropdown-item" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading event details...</p>
+            </div>
+
+            <!-- Error Container (Hidden by default) -->
+            <div id="errorContainer" class="error-container" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <h2>EVENT NOT FOUND</h2>
+                <p>The event you're looking for doesn't exist or has been removed.</p>
+                <a href="home.html" class="error-btn">
+                    <i class="fas fa-home"></i> GO BACK HOME
+                </a>
+            </div>
+
+            <!-- Event Details Container (Hidden by default) -->
+            <div id="eventDetailsContainer" class="event-details-container" style="display: none;">
+                <!-- Event Header Image -->
+                <div class="event-header-image">
+                    <img id="eventImage" src="" alt="Event Image">
+                    <div class="event-header-overlay">
+                        <div>
+                            <span class="event-badge-large" id="eventBadge">FEATURED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Content -->
+                <div class="event-content">
+                    <h1 class="event-title" id="eventTitle">Event Title</h1>
+
+                    <!-- Meta Information Grid -->
+                    <div class="event-meta-grid">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div class="meta-label">DATE</div>
+                            <div class="meta-value" id="eventDate">Loading...</div>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <div class="meta-label">TIME</div>
+                            <div class="meta-value" id="eventTime">Loading...</div>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="meta-label">VENUE</div>
+                            <div class="meta-value" id="eventVenue">Loading...</div>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-city"></i>
+                            <div class="meta-label">CITY</div>
+                            <div class="meta-value" id="eventCity">Loading...</div>
+                        </div>
+                    </div>
+
+                    <!-- Event Description -->
+                    <div class="event-description">
+                        <h3>ABOUT THE EVENT</h3>
+                        <p id="eventDescription">Loading description...</p>
+                    </div>
+
+                    <!-- Rules & Policies -->
+                    <div class="rules-section">
+                        <div class="rules-box">
+                            <h3><i class="fas fa-gavel"></i> EVENT RULES</h3>
+                            <ul id="eventRules">
+                                <li><i class="fas fa-check-circle"></i> Loading rules...</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rules-box">
+                            <h3><i class="fas fa-id-card"></i> AGE RESTRICTION</h3>
+                            <ul>
+                                <li><i class="fas fa-user"></i> <span id="eventAgeRestriction">All ages</span></li>
+                            </ul>
+                            
+                            <h3 style="margin-top: 20px;"><i class="fas fa-money-bill"></i> REFUND POLICY</h3>
+                            <ul>
+                                <li><i class="fas fa-info-circle"></i> <span id="eventRefundPolicy">No refund policy specified</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Ticket Box -->
+                    <div class="ticket-box" id="ticketBox">
+                        <h3>BOOK YOUR TICKETS</h3>
+                        
+                        <div class="ticket-info">
+                            <div class="price-info">
+                                <div class="price-label">TICKET PRICE</div>
+                                <div class="price-value" id="ticketPrice">₹0</div>
+                            </div>
+                            
+                            <div class="ticket-stats">
+                                <div class="ticket-stat">
+                                    <div class="stat-number" id="ticketsSold">0</div>
+                                    <div class="stat-label">SOLD</div>
+                                </div>
+                                <div class="ticket-stat">
+                                    <div class="stat-number" id="totalTickets">0</div>
+                                    <div class="stat-label">TOTAL</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Booking Section -->
+                        <div style="margin-top: 30px;">
+                            <div style="display: flex; align-items: center; gap: 30px; flex-wrap: wrap;">
+                                <div class="quantity-selector">
+                                    <button class="quantity-btn" onclick="decreaseQuantity()" id="decreaseBtn">-</button>
+                                    <input type="text" class="quantity-input" id="quantity" value="1" readonly>
+                                    <button class="quantity-btn" onclick="increaseQuantity()" id="increaseBtn">+</button>
+                                </div>
+                                <div class="total-price" id="totalPriceDisplay">Total: ₹0</div>
+                                <button class="book-btn" onclick="bookEvent()" id="bookBtn">
+                                    <i class="fas fa-ticket-alt"></i> BOOK NOW
+                                </button>
+                            </div>
+                            <p style="color: #FFFFFF; margin-top: 20px; font-weight: 600;">
+                                <i class="fas fa-info-circle"></i> Platform fee: 10% will be added at checkout
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Organizer Information -->
+                    <div class="organizer-section">
+                        <h3>ORGANIZER INFORMATION</h3>
+                        <div class="organizer-details">
+                            <div class="organizer-item">
+                                <i class="fas fa-user"></i>
+                                <span id="organizerName">Loading...</span>
+                            </div>
+                            <div class="organizer-item">
+                                <i class="fas fa-envelope"></i>
+                                <span id="organizerEmail">Loading...</span>
+                            </div>
+                            <div class="organizer-item">
+                                <i class="fas fa-phone"></i>
+                                <span id="organizerPhone">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h3>ABOUT</h3>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
+                            <li><a href="#"><i class="fas fa-bullhorn"></i> Careers</a></li>
+                            <li><a href="#"><i class="fas fa-newspaper"></i> Press</a></li>
+                            <li><a href="#"><i class="fas fa-blog"></i> Blog</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>SUPPORT</h3>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                            <li><a href="#"><i class="fas fa-headset"></i> Contact Us</a></li>
+                            <li><a href="#"><i class="fas fa-shield-alt"></i> Safety</a></li>
+                            <li><a href="#"><i class="fas fa-comment"></i> Feedback</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>LEGAL</h3>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
+                            <li><a href="#"><i class="fas fa-lock"></i> Privacy Policy</a></li>
+                            <li><a href="#"><i class="fas fa-cookie-bite"></i> Cookie Policy</a></li>
+                            <li><a href="#"><i class="fas fa-gavel"></i> Guidelines</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>CONNECT</h3>
+                        <ul>
+                            <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                            <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                            <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                            <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p>© 2024 BookMyEvent. All rights reserved. | Made with <i class="fas fa-heart"></i> for event lovers</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Dialog -->
+    <div id="loginDialog" class="login-dialog" style="display: none;">
+        <div class="dialog-content">
+            <i class="fas fa-lock"></i>
+            <h3>LOGIN REQUIRED</h3>
+            <p>Please sign in to book tickets for this event</p>
+            <div class="dialog-buttons">
+                <a href="login.html" class="dialog-btn primary">SIGN IN</a>
+                <a href="signup.html" class="dialog-btn secondary">SIGN UP</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Success Dialog -->
+    <div id="successDialog" class="success-dialog" style="display: none;">
+        <div class="success-content">
+            <i class="fas fa-check-circle"></i>
+            <h3>BOOKING CONFIRMED!</h3>
+            <p>Your tickets have been booked successfully.</p>
+            <div class="booking-id" id="bookingIdDisplay">BOOKING ID: #BME-123456</div>
+            <p>A confirmation email has been sent to your email address.</p>
+            <a href="my-tickets.html" class="success-btn">
+                <i class="fas fa-ticket-alt"></i> VIEW MY TICKETS
+            </a>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            collection,
+            addDoc,
+            updateDoc,
+            increment,
+            serverTimestamp,
+            query,
+            where,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBc5PBzQQk-W1NDy5-DQ217QbvYsahtiOs",
+            authDomain: "bookmyevent-21cd8.firebaseapp.com",
+            projectId: "bookmyevent-21cd8",
+            storageBucket: "bookmyevent-21cd8.firebasestorage.app",
+            messagingSenderId: "535972128829",
+            appId: "1:535972128829:web:d07360b589ad13a8dfe254",
+            measurementId: "G-R0DF8W0N81"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Get event ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
+
+        // DOM Elements
+        const authButtons = document.getElementById('authButtons');
+        const userMenu = document.getElementById('userMenu');
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userDropdown = document.getElementById('userDropdown');
+        const loginDialog = document.getElementById('loginDialog');
+        const successDialog = document.getElementById('successDialog');
+        const dropdownUserName = document.getElementById('dropdownUserName');
+        const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+        
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorContainer = document.getElementById('errorContainer');
+        const eventDetailsContainer = document.getElementById('eventDetailsContainer');
+        
+        // Event detail elements
+        const eventImage = document.getElementById('eventImage');
+        const eventBadge = document.getElementById('eventBadge');
+        const eventTitle = document.getElementById('eventTitle');
+        const eventDate = document.getElementById('eventDate');
+        const eventTime = document.getElementById('eventTime');
+        const eventVenue = document.getElementById('eventVenue');
+        const eventCity = document.getElementById('eventCity');
+        const eventDescription = document.getElementById('eventDescription');
+        const eventRules = document.getElementById('eventRules');
+        const eventAgeRestriction = document.getElementById('eventAgeRestriction');
+        const eventRefundPolicy = document.getElementById('eventRefundPolicy');
+        const ticketPrice = document.getElementById('ticketPrice');
+        const ticketsSold = document.getElementById('ticketsSold');
+        const totalTickets = document.getElementById('totalTickets');
+        const organizerName = document.getElementById('organizerName');
+        const organizerEmail = document.getElementById('organizerEmail');
+        const organizerPhone = document.getElementById('organizerPhone');
+        
+        // Booking elements
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decreaseBtn');
+        const increaseBtn = document.getElementById('increaseBtn');
+        const bookBtn = document.getElementById('bookBtn');
+        const totalPriceDisplay = document.getElementById('totalPriceDisplay');
+        const bookingIdDisplay = document.getElementById('bookingIdDisplay');
+        const ticketBox = document.getElementById('ticketBox');
+
+        let currentUser = null;
+        let currentEvent = null;
+        let currentQuantity = 1;
+        let maxTicketsPerUser = 10;
+
+        // Category to default image mapping
+        const categoryImages = {
+            'Music Concert': 'music.png',
+            'Tech Conference': 'tech.png',
+            'Sports Event': 'sports.png',
+            'Workshop': 'workshop.png',
+            'Comedy Show': 'comedy.png',
+            'Festival': 'festival.png',
+            'Business Networking': 'business.png',
+            'Food Festival': 'food.png',
+            'Art Exhibition': 'art.png',
+            'Charity Event': 'charity.png',
+            'default': 'event.png'
+        };
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                console.log('User logged in:', user.email);
+                
+                // Show user menu, hide auth buttons
+                authButtons.style.display = 'none';
+                userMenu.style.display = 'block';
+                
+                // Update dropdown with user info
+                dropdownUserName.textContent = user.displayName || 'Event Lover';
+                dropdownUserEmail.textContent = user.email;
+                
+                // Load event details
+                if (eventId) {
+                    await loadEventDetails();
+                } else {
+                    showError();
+                }
+            } else {
+                // Show auth buttons, hide user menu
+                authButtons.style.display = 'flex';
+                userMenu.style.display = 'none';
+                
+                // Load event details for non-logged in users
+                if (eventId) {
+                    await loadEventDetails();
+                } else {
+                    showError();
+                }
+            }
+        });
+
+        // Toggle user dropdown
+        userMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show');
+            }
+        });
+
+        // Logout function
+        window.logout = async function() {
+            try {
+                await signOut(auth);
+                window.location.href = 'home.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        };
+
+        // Get default image based on category
+        function getDefaultImage(category) {
+            const imageFile = categoryImages[category] || categoryImages['default'];
+            return `../assets/images/${imageFile}`;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        // Format time
+        function formatTime(timeString) {
+            if (!timeString) return 'TBD';
+            const [hours, minutes] = timeString.split(':');
+            const date = new Date();
+            date.setHours(hours, minutes);
+            return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        }
+
+        // Load event details from Firebase
+        async function loadEventDetails() {
+            try {
+                const eventDoc = await getDoc(doc(db, 'events', eventId));
+                
+                if (!eventDoc.exists()) {
+                    showError();
+                    return;
+                }
+                
+                currentEvent = { id: eventDoc.id, ...eventDoc.data() };
+                console.log('Event loaded:', currentEvent);
+                
+                // Update page with event details
+                displayEventDetails();
+                
+            } catch (error) {
+                console.error('Error loading event:', error);
+                showError();
+            }
+        }
+
+        // Display event details in the UI
+        function displayEventDetails() {
+            // Hide spinner, show event details
+            loadingSpinner.style.display = 'none';
+            eventDetailsContainer.style.display = 'block';
+            
+            // Set badge
+            const today = new Date().toDateString();
+            const eventDateObj = new Date(currentEvent.date);
+            if (eventDateObj.toDateString() === today) {
+                eventBadge.textContent = 'HAPPENING TODAY!';
+            } else if (currentEvent.ticketType === 'VIP') {
+                eventBadge.textContent = 'VIP EVENT';
+            } else if (currentEvent.ticketPrice === 0) {
+                eventBadge.textContent = 'FREE ENTRY';
+            } else {
+                eventBadge.textContent = 'FEATURED';
+            }
+            
+            // Set image
+            const imageUrl = currentEvent.posterImage || getDefaultImage(currentEvent.category);
+            eventImage.src = imageUrl;
+            eventImage.onerror = () => {
+                eventImage.src = getDefaultImage(currentEvent.category);
+            };
+            
+            // Set title
+            eventTitle.textContent = currentEvent.title || 'Untitled Event';
+            
+            // Set date and time
+            eventDate.textContent = formatDate(currentEvent.date);
+            
+            const startTime = formatTime(currentEvent.startTime);
+            const endTime = formatTime(currentEvent.endTime);
+            eventTime.textContent = `${startTime} - ${endTime}`;
+            
+            // Set venue and city
+            eventVenue.textContent = currentEvent.venueName || 'TBD';
+            eventCity.textContent = currentEvent.city || 'TBD';
+            
+            // Set description
+            eventDescription.textContent = currentEvent.description || 'No description available.';
+            
+            // Set rules
+            const rulesList = document.getElementById('eventRules');
+            rulesList.innerHTML = '';
+            
+            const rules = currentEvent.eventRules ? 
+                currentEvent.eventRules.split('\n').filter(rule => rule.trim()) : 
+                ['No specific rules provided.'];
+            
+            rules.forEach(rule => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check-circle"></i> ${rule}`;
+                rulesList.appendChild(li);
+            });
+            
+            // Set age restriction and refund policy
+            eventAgeRestriction.textContent = currentEvent.ageRestriction || 'All ages';
+            eventRefundPolicy.textContent = currentEvent.refundPolicy || 'No refund policy specified';
+            
+            // Set ticket info
+            const price = currentEvent.ticketPrice || 0;
+            const priceClass = price === 0 ? 'free' : '';
+            ticketPrice.className = `price-value ${priceClass}`;
+            ticketPrice.innerHTML = price === 0 ? 'FREE' : `₹${price} <small>+ fees</small>`;
+            
+            ticketsSold.textContent = currentEvent.ticketsSold || 0;
+            totalTickets.textContent = currentEvent.totalTickets || 0;
+            
+            // Set organizer info
+            organizerName.textContent = currentEvent.organizerName || 'Not specified';
+            organizerEmail.textContent = currentEvent.organizerEmail || 'Not specified';
+            organizerPhone.textContent = currentEvent.organizerPhone || 'Not specified';
+            
+            // Set max tickets per user
+            maxTicketsPerUser = currentEvent.ticketsPerUser || 10;
+            
+            // Update total price
+            updateTotalPrice();
+            
+            // Check if tickets are available
+            const available = (currentEvent.totalTickets || 0) - (currentEvent.ticketsSold || 0);
+            if (available <= 0) {
+                bookBtn.disabled = true;
+                bookBtn.innerHTML = '<i class="fas fa-times-circle"></i> SOLD OUT';
+                decreaseBtn.disabled = true;
+                increaseBtn.disabled = true;
+            }
+        }
+
+        // Show error
+        function showError() {
+            loadingSpinner.style.display = 'none';
+            errorContainer.style.display = 'block';
+        }
+
+        // Increase quantity
+        window.increaseQuantity = function() {
+            const available = (currentEvent.totalTickets || 0) - (currentEvent.ticketsSold || 0);
+            if (currentQuantity < maxTicketsPerUser && currentQuantity < available) {
+                currentQuantity++;
+                quantityInput.value = currentQuantity;
+                updateTotalPrice();
+            }
+        };
+
+        // Decrease quantity
+        window.decreaseQuantity = function() {
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                quantityInput.value = currentQuantity;
+                updateTotalPrice();
+            }
+        };
+
+        // Update total price display
+        function updateTotalPrice() {
+            const price = currentEvent.ticketPrice || 0;
+            const total = price * currentQuantity;
+            if (price === 0) {
+                totalPriceDisplay.textContent = 'Total: FREE';
+            } else {
+                totalPriceDisplay.textContent = `Total: ₹${total}`;
+            }
+        }
+
+        // Book event
+        window.bookEvent = async function() {
+            if (!currentUser) {
+                loginDialog.style.display = 'flex';
+                return;
+            }
+            
+            if (!currentEvent) {
+                alert('Event data not loaded');
+                return;
+            }
+            
+            const available = (currentEvent.totalTickets || 0) - (currentEvent.ticketsSold || 0);
+            if (available < currentQuantity) {
+                alert(`Only ${available} tickets available`);
+                return;
+            }
+            
+            // Show loading on button
+            bookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
+            bookBtn.disabled = true;
+            
+            try {
+                // Create booking in Firestore
+                const bookingData = {
+                    eventId: currentEvent.id,
+                    eventTitle: currentEvent.title,
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    quantity: currentQuantity,
+                    ticketPrice: currentEvent.ticketPrice || 0,
+                    totalAmount: (currentEvent.ticketPrice || 0) * currentQuantity,
+                    platformFee: (currentEvent.ticketPrice || 0) * currentQuantity * 0.1,
+                    bookingDate: serverTimestamp(),
+                    status: 'confirmed',
+                    paymentStatus: 'completed'
+                };
+                
+                const bookingRef = await addDoc(collection(db, 'bookings'), bookingData);
+                
+                // Update tickets sold in event
+                await updateDoc(doc(db, 'events', currentEvent.id), {
+                    ticketsSold: increment(currentQuantity),
+                    revenue: increment((currentEvent.ticketPrice || 0) * currentQuantity)
+                });
+                
+                // Add to user's booking history
+                const userRef = doc(db, 'users', currentUser.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    const bookings = userData.bookings || [];
+                    bookings.push(bookingRef.id);
+                    
+                    await updateDoc(userRef, {
+                        bookings: bookings
+                    });
+                }
+                
+                // Show success dialog
+                const bookingId = 'BME-' + bookingRef.id.slice(0, 6).toUpperCase();
+                bookingIdDisplay.textContent = `BOOKING ID: #${bookingId}`;
+                successDialog.style.display = 'flex';
+                
+                // Update UI
+                ticketsSold.textContent = (currentEvent.ticketsSold || 0) + currentQuantity;
+                
+                // Check if sold out
+                const remaining = (currentEvent.totalTickets || 0) - ((currentEvent.ticketsSold || 0) + currentQuantity);
+                if (remaining <= 0) {
+                    bookBtn.innerHTML = '<i class="fas fa-times-circle"></i> SOLD OUT';
+                    decreaseBtn.disabled = true;
+                    increaseBtn.disabled = true;
+                } else {
+                    // Reset button
+                    bookBtn.innerHTML = '<i class="fas fa-ticket-alt"></i> BOOK NOW';
+                    bookBtn.disabled = false;
+                    
+                    // Reset quantity
+                    currentQuantity = 1;
+                    quantityInput.value = 1;
+                    updateTotalPrice();
+                }
+                
+            } catch (error) {
+                console.error('Booking error:', error);
+                alert('Failed to book tickets: ' + error.message);
+                
+                // Reset button
+                bookBtn.innerHTML = '<i class="fas fa-ticket-alt"></i> BOOK NOW';
+                bookBtn.disabled = false;
+            }
+        };
+
+        // Close login dialog
+        loginDialog.addEventListener('click', (e) => {
+            if (e.target === loginDialog) {
+                loginDialog.style.display = 'none';
+            }
+        });
+
+        // Close success dialog
+        successDialog.addEventListener('click', (e) => {
+            if (e.target === successDialog) {
+                successDialog.style.display = 'none';
+            }
+        });
+
+        // If no event ID provided, show error
+        if (!eventId) {
+            showError();
+        }
+
+        console.log('%c🎫 BookMyEvent - Event Details', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
+    </script>
+</body>
+</html>
