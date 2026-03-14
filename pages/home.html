@@ -695,6 +695,17 @@
             color: #666;
         }
 
+        .highlight {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            color: #FFFFFF;
+            padding: 0 12px;
+            display: inline-block;
+            border: 3px solid #000;
+            transform: rotate(-1deg);
+            box-shadow: 5px 5px 0 #000;
+            font-weight: 900;
+        }
+
         .event-price.free {
             color: #28a745;
         }
@@ -931,6 +942,10 @@
 
         /* Mobile First Responsive */
         @media (max-width: 480px) {
+            h1 {
+                font-size: 1.85rem;
+                letter-spacing: -2px;
+            }
             .content {
                 padding: 0 15px;
             }
@@ -1004,6 +1019,10 @@
         }
 
         @media (min-width: 481px) and (max-width: 768px) {
+            h1 {
+                font-size: 1.85rem;
+                letter-spacing: -2px;
+            }
             .header {
                 flex-wrap: wrap;
             }
@@ -1046,11 +1065,10 @@
         <div class="content">
             <!-- Header -->
             <div class="header">
-                <div class="logo-text">
-                    <span class="book">BOOK</span>
-                    <span class="my">MY</span>
-                    <span class="event">EVENT</span>
-                </div>
+
+                <h1>
+                    <span class="highlight">BOOKMYEVENT</span>
+                </h1>
 
                 <!-- Auth Buttons -->
                 <div class="auth-buttons" id="authButtons">

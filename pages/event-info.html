@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>BookMyEvent - Host Your Event</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Figtree -->
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Figtree', sans-serif;
+            background: linear-gradient(135deg, #f5f0ff 0%, #e9d9ff 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 30% 40%, rgba(91, 31, 166, 0.03) 0%, transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(156, 77, 255, 0.03) 0%, transparent 40%),
+                repeating-linear-gradient(45deg, rgba(91, 31, 166, 0.02) 0px, rgba(91, 31, 166, 0.02) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Content */
+        .content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo-text {
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .logo-text .book {
+            color: #5B1FA6;
+            background: #FFFFFF;
+            padding: 6px 8px;
+            border: 3px solid #000;
+            display: inline-block;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .logo-text .my {
+            color: #FFFFFF;
+            background: linear-gradient(135deg, #7A2CCB, #9C4DFF);
+            padding: 6px 8px;
+            border: 3px solid #000;
+            display: inline-block;
+            margin: 0 3px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .logo-text .event {
+            color: #FFFFFF;
+            background: #5B1FA6;
+            padding: 6px 8px;
+            border: 3px solid #000;
+            display: inline-block;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border: 3px solid #000;
+            font-weight: 700;
+            text-decoration: none;
+            color: #5B1FA6;
+            box-shadow: 4px 4px 0 #000;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+        }
+
+        .back-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            color: #FFFFFF;
+            padding: 0 12px;
+            display: inline-block;
+            border: 3px solid #000;
+            transform: rotate(-1deg);
+            box-shadow: 5px 5px 0 #000;
+            font-weight: 900;
+        }
+
+        /* Page Title */
+        .page-header {
+            margin: 40px 0 30px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: #000;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 5px;
+            background: linear-gradient(90deg, #5B1FA6, #9C4DFF);
+            border: 2px solid #000;
+        }
+
+        .page-title span {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            color: #FFFFFF;
+            padding: 4px 12px;
+            border: 2px solid #000;
+            display: inline-block;
+            margin-left: 10px;
+            transform: rotate(-2deg);
+            font-size: clamp(1rem, 4vw, 1.5rem);
+        }
+
+        .page-description {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Info Cards Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .info-card {
+            background: #FFFFFF;
+            border: 3px solid #000;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            border-radius: 15px;
+            padding: 30px 25px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0 rgba(0,0,0,0.1);
+        }
+
+        .info-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border: 3px solid #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .info-icon i {
+            font-size: 2rem;
+            color: #FFFFFF;
+        }
+
+        .info-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #5B1FA6;
+        }
+
+        .info-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #E3D1FF;
+            font-size: 0.95rem;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .info-list li i {
+            color: #28a745;
+            width: 20px;
+        }
+
+        /* Email Section */
+        .email-section {
+            background: #F5F0FF;
+            border: 4px solid #000;
+            box-shadow: 12px 12px 0 rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 50px 0;
+        }
+
+        .email-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .email-header i {
+            font-size: 3rem;
+            color: #5B1FA6;
+            background: #FFFFFF;
+            padding: 15px;
+            border: 3px solid #000;
+            border-radius: 15px;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+        }
+
+        .email-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #5B1FA6;
+        }
+
+        .email-address {
+            background: #FFFFFF;
+            border: 3px solid #000;
+            border-radius: 50px;
+            padding: 15px 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #5B1FA6;
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .email-address i {
+            color: #FFD700;
+        }
+
+        .copy-btn {
+            background: #FFD700;
+            border: 3px solid #000;
+            padding: 10px 25px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #000;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        .copy-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .email-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .detail-box {
+            background: #FFFFFF;
+            border: 2px solid #000;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .detail-box h4 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #5B1FA6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-box h4 i {
+            color: #FFD700;
+        }
+
+        .detail-box ul {
+            list-style: none;
+        }
+
+        .detail-box ul li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #E3D1FF;
+            font-size: 0.95rem;
+        }
+
+        .detail-box ul li:last-child {
+            border-bottom: none;
+        }
+
+        .detail-box ul li i {
+            color: #28a745;
+            width: 20px;
+            margin-right: 8px;
+        }
+
+        /* Process Steps */
+        .process-steps {
+            margin: 50px 0;
+        }
+
+        .process-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: #000;
+            text-align: center;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .step-item {
+            background: #FFFFFF;
+            border: 3px solid #000;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            border: 2px solid #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin: 0 auto 15px;
+        }
+
+        .step-item h4 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #5B1FA6;
+        }
+
+        .step-item p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .step-time {
+            background: #FFD700;
+            border: 2px solid #000;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin: 50px 0;
+        }
+
+        .faq-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: #000;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .faq-item {
+            background: #FFFFFF;
+            border: 3px solid #000;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.1);
+        }
+
+        .faq-item h4 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #5B1FA6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-item h4 i {
+            color: #FFD700;
+        }
+
+        .faq-item p {
+            color: #666;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        /* CTA Button */
+        .cta-container {
+            text-align: center;
+            margin: 50px 0 30px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            border: 4px solid #000;
+            font-weight: 900;
+            font-size: 1.3rem;
+            color: #FFFFFF;
+            box-shadow: 10px 10px 0 #000;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 15px;
+        }
+
+        .cta-btn:hover {
+            transform: translate(5px, 5px);
+            box-shadow: 5px 5px 0 #000;
+        }
+
+        .cta-btn i {
+            font-size: 1.5rem;
+        }
+
+        .note-text {
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: #5B1FA6;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            color: #FFFFFF;
+            border-top: 4px solid #000;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 30px;
+            height: 3px;
+            background: #FFFFFF;
+            border: 2px solid #000;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .footer-col ul li a:hover {
+            transform: translateX(5px);
+            opacity: 1;
+        }
+
+        .footer-col ul li i {
+            width: 18px;
+            font-size: 1rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255,255,255,0.2);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom i {
+            color: #FFD700;
+            margin: 0 3px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #28a745;
+            color: #FFFFFF;
+            padding: 15px 25px;
+            border: 3px solid #000;
+            border-radius: 10px;
+            box-shadow: 8px 8px 0 #000;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                padding: 0 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .email-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .email-address {
+                flex-wrap: wrap;
+                justify-content: center;
+                text-align: center;
+                font-size: 1rem;
+            }
+
+            .copy-btn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .cta-btn {
+                font-size: 1.1rem;
+                padding: 15px 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .info-card {
+                padding: 20px;
+            }
+
+            .email-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <div class="container">
+        <div class="content">
+            <!-- Header -->
+            <div class="header">
+                <h1>
+                    <span class="highlight">BOOKMYEVENT</span>
+                </h1>
+                
+                <a href="home.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> BACK TO HOME
+                </a>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    HOST YOUR <span>EVENT</span>
+                </h1>
+                <p class="page-description">
+                    Share your passion with thousands of event lovers. Follow these simple steps to get your event listed on BookMyEvent.
+                </p>
+            </div>
+
+            <!-- Info Cards -->
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>1. Prepare Details</h3>
+                    <p>Gather all necessary information about your event before reaching out.</p>
+                    <ul class="info-list">
+                        <li><i class="fas fa-check-circle"></i> Event name & category</li>
+                        <li><i class="fas fa-check-circle"></i> Date & time</li>
+                        <li><i class="fas fa-check-circle"></i> Venue & full address</li>
+                        <li><i class="fas fa-check-circle"></i> Ticket price & quantity</li>
+                        <li><i class="fas fa-check-circle"></i> Event description</li>
+                        <li><i class="fas fa-check-circle"></i> Organizer contact info</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>2. Send Email</h3>
+                    <p>Email us all the details at our dedicated event submission address.</p>
+                    <ul class="info-list">
+                        <li><i class="fas fa-check-circle"></i> Write to event@bookmyevent.com</li>
+                        <li><i class="fas fa-check-circle"></i> Include all event details</li>
+                        <li><i class="fas fa-check-circle"></i> Attach event poster/images</li>
+                        <li><i class="fas fa-check-circle"></i> Mention special requirements</li>
+                        <li><i class="fas fa-check-circle"></i> Provide organizer credentials</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>3. Get Confirmation</h3>
+                    <p>Our team will review your submission and contact you within 24-48 hours.</p>
+                    <ul class="info-list">
+                        <li><i class="fas fa-check-circle"></i> Team reviews your event</li>
+                        <li><i class="fas fa-check-circle"></i> Verification call within 48 hrs</li>
+                        <li><i class="fas fa-check-circle"></i> Discuss pricing & commission</li>
+                        <li><i class="fas fa-check-circle"></i> Finalize event details</li>
+                        <li><i class="fas fa-check-circle"></i> Event goes live on platform</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Email Section -->
+            <div class="email-section">
+                <div class="email-header">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h2>EMAIL US YOUR EVENT DETAILS</h2>
+                </div>
+
+                <div class="email-address">
+                    <i class="fas fa-envelope"></i> event@bookmyevent.com
+                    <button class="copy-btn" onclick="copyEmail()">
+                        <i class="fas fa-copy"></i> COPY
+                    </button>
+                </div>
+
+                <p style="margin-bottom: 20px; font-weight: 600;">Please include the following information in your email:</p>
+
+                <div class="email-details">
+                    <div class="detail-box">
+                        <h4><i class="fas fa-calendar-alt"></i> Event Info</h4>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Event Name</li>
+                            <li><i class="fas fa-check"></i> Category</li>
+                            <li><i class="fas fa-check"></i> Date & Time</li>
+                            <li><i class="fas fa-check"></i> Duration</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h4><i class="fas fa-map-marker-alt"></i> Venue Details</h4>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Venue Name</li>
+                            <li><i class="fas fa-check"></i> Full Address</li>
+                            <li><i class="fas fa-check"></i> City & State</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h4><i class="fas fa-ticket-alt"></i> Ticket Info</h4>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Ticket Type (Paid/Free)</li>
+                            <li><i class="fas fa-check"></i> Price per Ticket</li>
+                            <li><i class="fas fa-check"></i> Total Tickets Available</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h4><i class="fas fa-user-tie"></i> Organizer Info</h4>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Organizer Name</li>
+                            <li><i class="fas fa-check"></i> Contact Email</li>
+                            <li><i class="fas fa-check"></i> Phone Number</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #FFFFFF; border: 2px solid #000; border-radius: 10px; padding: 20px; margin-top: 20px;">
+                    <h4 style="margin-bottom: 10px; color: #5B1FA6;"><i class="fas fa-file-alt"></i> Additional Information</h4>
+                    <p style="color: #666;">✓ Event Description (minimum 100 words)</p>
+                    <p style="color: #666;">✓ Age Restriction (if any)</p>
+                    <p style="color: #666;">✓ Refund Policy</p>
+                    <p style="color: #666;">✓ Event Rules & Guidelines</p>
+                    <p style="color: #666;">✓ Attach Event Poster/Images</p>
+                </div>
+            </div>
+
+            <!-- Process Timeline -->
+            <div class="process-steps">
+                <h3 class="process-title">WHAT HAPPENS AFTER YOU SEND THE EMAIL?</h3>
+                
+                <div class="steps-container">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <h4>Email Received</h4>
+                        <p>Auto-acknowledgment sent within 2 hours</p>
+                        <span class="step-time">0-2 HOURS</span>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <h4>Initial Review</h4>
+                        <p>Team checks event details & eligibility</p>
+                        <span class="step-time">2-24 HOURS</span>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <h4>Verification Call</h4>
+                        <p>Discuss pricing, commission & final details</p>
+                        <span class="step-time">24-48 HOURS</span>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <h4>Event Goes Live</h4>
+                        <p>Your event is published on BookMyEvent</p>
+                        <span class="step-time">48-72 HOURS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="faq-section">
+                <h3 class="faq-title">FREQUENTLY ASKED QUESTIONS</h3>
+                
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h4><i class="fas fa-question-circle"></i> How much does it cost?</h4>
+                        <p>Listing your event is absolutely FREE! We only charge a 10-15% commission on tickets sold through our platform.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h4><i class="fas fa-clock"></i> How long until my event is live?</h4>
+                        <p>After sending your email, our team typically reviews and activates events within 48-72 hours after verification.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h4><i class="fas fa-image"></i> What images do I need?</h4>
+                        <p>A high-quality event poster/cover image (minimum 1200x600px) is required. Additional images are welcome.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h4><i class="fas fa-money-bill"></i> When do I get paid?</h4>
+                        <p>Payouts are processed within 7-10 business days after your event ends. Funds are transferred to your bank account.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h4><i class="fas fa-ticket"></i> Can I sell VIP tickets?</h4>
+                        <p>Yes! You can create multiple ticket tiers (General, VIP, Early Bird) with different prices and benefits.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h4><i class="fas fa-cancel"></i> Can I cancel my event?</h4>
+                        <p>Yes, you can cancel anytime before the event goes live. After listing, cancellation policies apply.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Button -->
+            <div class="cta-container">
+                <a href="mailto:event@bookmyevent.com?subject=EVENT%20SUBMISSION%20-%20[Your%20Event%20Name]" class="cta-btn">
+                    <i class="fas fa-envelope"></i> SEND US AN EMAIL
+                </a>
+                <p class="note-text">
+                    <i class="fas fa-clock"></i> Average response time: 24 hours
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h3>ABOUT</h3>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
+                            <li><a href="#"><i class="fas fa-bullhorn"></i> Careers</a></li>
+                            <li><a href="#"><i class="fas fa-newspaper"></i> Press</a></li>
+                            <li><a href="#"><i class="fas fa-blog"></i> Blog</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>SUPPORT</h3>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                            <li><a href="#"><i class="fas fa-headset"></i> Contact Us</a></li>
+                            <li><a href="#"><i class="fas fa-shield-alt"></i> Safety</a></li>
+                            <li><a href="#"><i class="fas fa-comment"></i> Feedback</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>LEGAL</h3>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
+                            <li><a href="#"><i class="fas fa-lock"></i> Privacy Policy</a></li>
+                            <li><a href="#"><i class="fas fa-cookie-bite"></i> Cookie Policy</a></li>
+                            <li><a href="#"><i class="fas fa-gavel"></i> Guidelines</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>CONNECT</h3>
+                        <ul>
+                            <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                            <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                            <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                            <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p>© 2024 BookMyEvent. All rights reserved. | Made with <i class="fas fa-heart"></i> for event creators</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Email address copied to clipboard!</span>
+    </div>
+
+    <script>
+        function copyEmail() {
+            const email = 'event@bookmyevent.com';
+            
+            // Create temporary input
+            const tempInput = document.createElement('input');
+            tempInput.value = email;
+            document.body.appendChild(tempInput);
+            
+            // Select and copy
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            
+            // Remove temporary input
+            document.body.removeChild(tempInput);
+            
+            // Show toast
+            const toast = document.getElementById('toast');
+            toast.style.display = 'flex';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
