@@ -521,6 +521,25 @@
             background: #F5F0FF;
         }
 
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border: 2px solid #000;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 20px;
+        }
+
+        .status-badge.upcoming {
+            background: #28a745;
+            color: #FFFFFF;
+        }
+
+        .status-badge.past {
+            background: #FFD700;
+            color: #000;
+        }
+
         .empty-history {
             text-align: center;
             padding: 60px 40px;
@@ -949,7 +968,7 @@
                         <div class="section-title">
                             <i class="fas fa-history"></i> EVENT HISTORY
                         </div>
-                        <p class="form-label">EVENTS YOU'VE ATTENDED OR VISITED</p>
+                        <p class="form-label">EVENTS YOU'VE ATTENDED OR BOOKED</p>
                         
                         <div id="eventHistoryContainer">
                             <!-- Event history table will be loaded here -->
@@ -959,7 +978,9 @@
                                         <tr>
                                             <th>EVENT NAME</th>
                                             <th>TICKET PRICE</th>
-                                            <th>DATE</th>
+                                            <th>QUANTITY</th>
+                                            <th>TOTAL</th>
+                                            <th>STATUS</th>
                                         </tr>
                                     </thead>
                                     <tbody id="historyBody">
@@ -970,7 +991,7 @@
                             <div class="empty-history" id="emptyHistory">
                                 <i class="fas fa-ticket-alt"></i>
                                 <p>NO EVENTS IN YOUR HISTORY YET</p>
-                                <p style="font-size: 1rem; margin-top: 15px; color: #666;">Explore events and they'll appear here!</p>
+                                <p style="font-size: 1rem; margin-top: 15px; color: #666;">Book events and they'll appear here!</p>
                             </div>
                         </div>
                     </div>
@@ -994,7 +1015,10 @@
             getDoc,
             setDoc,
             updateDoc,
-            arrayUnion,
+            collection,
+            query,
+            where,
+            onSnapshot,
             serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -1005,8 +1029,7 @@
             projectId: "bookmyevent-21cd8",
             storageBucket: "bookmyevent-21cd8.firebasestorage.app",
             messagingSenderId: "535972128829",
-            appId: "1:535972128829:web:d07360b589ad13a8dfe254",
-            measurementId: "G-R0DF8W0N81"
+            appId: "1:535972128829:web:d07360b589ad13a8dfe254"
         };
 
         // Initialize Firebase
@@ -1052,6 +1075,7 @@
 
         let currentUser = null;
         let userProfile = null;
+        let unsubscribeBookings = null;
 
         // Check authentication
         onAuthStateChanged(auth, async (user) => {
@@ -1069,11 +1093,107 @@
                 }
                 
                 await loadUserProfile();
+                loadUserBookings();
             } else {
                 // Redirect to login if not authenticated
                 window.location.href = 'login.html';
             }
         });
+
+        // Load user bookings for history
+        function loadUserBookings() {
+            if (!currentUser) return;
+            
+            // Create query for user's paid bookings
+            const bookingsQuery = query(
+                collection(db, 'bookings'),
+                where('userId', '==', currentUser.uid),
+                where('status', '==', 'paid')
+            );
+            
+            // Unsubscribe from previous listener if exists
+            if (unsubscribeBookings) {
+                unsubscribeBookings();
+            }
+            
+            // Set up real-time listener
+            unsubscribeBookings = onSnapshot(bookingsQuery, async (snapshot) => {
+                console.log('Bookings updated in profile');
+                
+                const bookings = [];
+                for (const doc of snapshot.docs) {
+                    const booking = { id: doc.id, ...doc.data() };
+                    
+                    // Get event details if needed
+                    if (booking.eventId) {
+                        try {
+                            const eventDoc = await getDoc(doc(db, 'events', booking.eventId));
+                            if (eventDoc.exists()) {
+                                booking.event = eventDoc.data();
+                            }
+                        } catch (e) {
+                            console.warn('Could not load event details');
+                        }
+                    }
+                    
+                    bookings.push(booking);
+                }
+                
+                // Update event count
+                eventCount.textContent = bookings.length;
+                
+                // Display in history
+                displayEventHistory(bookings);
+            });
+        }
+
+        // Display event history from bookings
+        function displayEventHistory(bookings) {
+            if (bookings && bookings.length > 0) {
+                historyTableContainer.style.display = 'block';
+                emptyHistory.style.display = 'none';
+                
+                historyBody.innerHTML = '';
+                bookings.forEach(booking => {
+                    const row = document.createElement('tr');
+                    
+                    const eventName = booking.eventName || booking.eventTitle || 'Unknown Event';
+                    const price = booking.ticketPrice || 0;
+                    const quantity = booking.quantity || 1;
+                    const total = booking.totalAmount || booking.price || (price * quantity);
+                    
+                    // Determine status based on event date
+                    let status = 'Upcoming';
+                    let statusClass = 'upcoming';
+                    
+                    if (booking.eventDate) {
+                        try {
+                            const eventDate = new Date(booking.eventDate);
+                            const today = new Date();
+                            if (eventDate < today) {
+                                status = 'Past Event';
+                                statusClass = 'past';
+                            }
+                        } catch (e) {
+                            // Default to upcoming
+                        }
+                    }
+                    
+                    row.innerHTML = `
+                        <td><strong>${eventName}</strong></td>
+                        <td>${price === 0 ? 'FREE' : '₹' + price}</td>
+                        <td>${quantity}</td>
+                        <td>${price === 0 ? 'FREE' : '₹' + total}</td>
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    `;
+                    historyBody.appendChild(row);
+                });
+            } else {
+                historyTableContainer.style.display = 'none';
+                emptyHistory.style.display = 'block';
+                eventCount.textContent = '0';
+            }
+        }
 
         // Load user profile from Firestore
         async function loadUserProfile() {
@@ -1098,6 +1218,10 @@
                     // Update display name if different
                     if (userProfile.fullName && userProfile.fullName !== displayName.textContent) {
                         displayName.textContent = userProfile.fullName;
+                        
+                        // Update avatar
+                        const initial = userProfile.fullName.charAt(0).toUpperCase();
+                        avatar.innerHTML = `<span style="font-size: 3.5rem;">${initial}</span>`;
                     }
                     
                     // Update profile completion
@@ -1105,9 +1229,6 @@
                     
                     // Load interests
                     loadInterests(userProfile.interests || []);
-                    
-                    // Load event history
-                    loadEventHistory(userProfile.eventHistory || []);
                     
                     // Member since
                     if (userProfile.createdAt) {
@@ -1131,7 +1252,6 @@
                         city: '',
                         bio: '',
                         interests: [],
-                        eventHistory: [],
                         createdAt: serverTimestamp(),
                         updatedAt: serverTimestamp()
                     };
@@ -1176,37 +1296,6 @@
                 });
                 interestsGrid.appendChild(chip);
             });
-        }
-
-        // Load event history
-        function loadEventHistory(history) {
-            if (history && history.length > 0) {
-                historyTableContainer.style.display = 'block';
-                emptyHistory.style.display = 'none';
-                
-                historyBody.innerHTML = '';
-                history.forEach(event => {
-                    const row = document.createElement('tr');
-                    const date = event.date ? new Date(event.date).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
-                    }) : 'Recently';
-                    
-                    row.innerHTML = `
-                        <td><strong>${event.name}</strong></td>
-                        <td>₹${event.price}</td>
-                        <td>${date}</td>
-                    `;
-                    historyBody.appendChild(row);
-                });
-                
-                eventCount.textContent = history.length;
-            } else {
-                historyTableContainer.style.display = 'none';
-                emptyHistory.style.display = 'block';
-                eventCount.textContent = '0';
-            }
         }
 
         // Update profile completion percentage
@@ -1385,35 +1474,14 @@
             }
         };
 
-        // Add event to history function (for use from other pages)
-        window.addEventToHistory = async function(eventName, eventPrice) {
-            if (!currentUser) return;
-            
-            try {
-                const userRef = doc(db, 'users', currentUser.uid);
-                await updateDoc(userRef, {
-                    eventHistory: arrayUnion({
-                        name: eventName,
-                        price: eventPrice,
-                        date: new Date().toISOString()
-                    }),
-                    updatedAt: serverTimestamp()
-                });
-                console.log('Event added to history');
-                
-                // Reload history section
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    loadEventHistory(userSnap.data().eventHistory || []);
-                }
-                
-            } catch (error) {
-                console.error('Error adding event to history:', error);
+        // Cleanup listener on page unload
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeBookings) {
+                unsubscribeBookings();
             }
-        };
+        });
 
-        console.log('%c👤 BookMyEvent - Profile Page', 'color: #5B1FA6; font-size: 16px; font-weight: bold;');
-        console.log('%c📍 Firestore Integration Active', 'color: #00C851; font-size: 12px;');
+        console.log('%c👤 BookMyEvent - Profile Page (Fixed)', 'color: #5B1FA6; font-size: 16px; font-weight: bold;');
     </script>
 </body>
 </html>

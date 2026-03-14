@@ -367,8 +367,6 @@
             position: absolute;
             top: 20px;
             right: -30px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #000;
             padding: 8px 40px;
             font-weight: 800;
             font-size: 0.9rem;
@@ -378,14 +376,14 @@
             border: 2px solid #000;
         }
 
-        .ticket-ribbon.used {
-            background: linear-gradient(135deg, #dc3545, #c82333);
+        .ticket-ribbon.upcoming {
+            background: #28a745;
             color: #FFFFFF;
         }
 
-        .ticket-ribbon.upcoming {
-            background: linear-gradient(135deg, #28a745, #218838);
-            color: #FFFFFF;
+        .ticket-ribbon.used {
+            background: #FFD700;
+            color: #000;
         }
 
         .ticket-header {
@@ -555,6 +553,18 @@
             font-size: 0.8rem;
             color: #666;
             margin-top: 5px;
+        }
+
+        .booking-code {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #5B1FA6;
+            background: #F5F0FF;
+            padding: 8px;
+            border: 2px solid #000;
+            display: inline-block;
+            margin-top: 5px;
+            border-radius: 8px;
         }
 
         /* No Tickets */
@@ -730,6 +740,17 @@
         .booking-detail .value {
             font-weight: 800;
             color: #5B1FA6;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #5B1FA6, #9C4DFF);
+            color: #FFFFFF;
+            padding: 0 12px;
+            display: inline-block;
+            border: 3px solid #000;
+            transform: rotate(-1deg);
+            box-shadow: 5px 5px 0 #000;
+            font-weight: 900;
         }
 
         .modal-footer {
@@ -947,11 +968,10 @@
                     <i class="fas fa-arrow-left"></i> BACK TO HOME
                 </a>
                 
-                <div class="logo-text">
-                    <span class="book">BOOK</span>
-                    <span class="my">MY</span>
-                    <span class="event">EVENT</span>
-                </div>
+                <h1>
+                    <span class="highlight">BOOKMYEVENT</span>
+                </h1>
+
                 
                 <!-- Auth Buttons (shown when not logged in) -->
                 <div class="auth-buttons" id="authButtons">
@@ -1093,7 +1113,11 @@
             </div>
             <div class="modal-body">
                 <div class="qr-large">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" id="modalQR" alt="QR Code">
+                    <img id="modalQR" src="" alt="QR Code">
+                </div>
+                <div class="booking-detail">
+                    <span class="label">Booking Code:</span>
+                    <span class="value" id="modalBookingCode">BME-XXXXXX</span>
                 </div>
                 <div class="booking-detail">
                     <span class="label">Booking ID:</span>
@@ -1157,8 +1181,7 @@
             projectId: "bookmyevent-21cd8",
             storageBucket: "bookmyevent-21cd8.firebasestorage.app",
             messagingSenderId: "535972128829",
-            appId: "1:535972128829:web:d07360b589ad13a8dfe254",
-            measurementId: "G-R0DF8W0N81"
+            appId: "1:535972128829:web:d07360b589ad13a8dfe254"
         };
 
         // Initialize Firebase
@@ -1181,6 +1204,7 @@
         
         // Modal elements
         const modalQR = document.getElementById('modalQR');
+        const modalBookingCode = document.getElementById('modalBookingCode');
         const modalBookingId = document.getElementById('modalBookingId');
         const modalEventName = document.getElementById('modalEventName');
         const modalDateTime = document.getElementById('modalDateTime');
@@ -1193,21 +1217,6 @@
         let currentFilter = 'all';
         let unsubscribeBookings = null;
         let eventCache = new Map(); // Cache for event details
-
-        // Category to default image mapping
-        const categoryImages = {
-            'Music Concert': 'music.png',
-            'Tech Conference': 'tech.png',
-            'Sports Event': 'sports.png',
-            'Workshop': 'workshop.png',
-            'Comedy Show': 'comedy.png',
-            'Festival': 'festival.png',
-            'Business Networking': 'business.png',
-            'Food Festival': 'food.png',
-            'Art Exhibition': 'art.png',
-            'Charity Event': 'charity.png',
-            'default': 'event.png'
-        };
 
         // Check authentication
         onAuthStateChanged(auth, async (user) => {
@@ -1260,12 +1269,12 @@
             ticketsGrid.style.display = 'none';
             noTickets.style.display = 'none';
             
-            // Create query for user's bookings
+            // Create query for user's bookings - only show paid/completed bookings
             const bookingsQuery = query(
                 collection(db, 'bookings'),
                 where('userId', '==', currentUser.uid),
-                orderBy('bookingDate', 'desc')
-            );
+                where('status', '==', 'paid')
+                );
             
             // Unsubscribe from previous listener if exists
             if (unsubscribeBookings) {
@@ -1283,10 +1292,15 @@
                 for (const doc of snapshot.docs) {
                     const booking = { id: doc.id, ...doc.data() };
                     
+                    // Generate booking code if not present
+                    if (!booking.bookingCode) {
+                        booking.bookingCode = generateBookingCode(booking.id);
+                    }
+                    
                     // Check if event details are in cache
                     if (eventCache.has(booking.eventId)) {
                         booking.event = eventCache.get(booking.eventId);
-                    } else {
+                    } else if (booking.eventId) {
                         // Fetch event details
                         try {
                             const eventDoc = await getDoc(doc(db, 'events', booking.eventId));
@@ -1316,6 +1330,12 @@
             });
         }
 
+        // Generate booking code
+        function generateBookingCode(bookingId) {
+            const shortId = bookingId.slice(0, 6).toUpperCase();
+            return `BME-${shortId}`;
+        }
+
         // Show error message
         function showError(message) {
             ticketsGrid.style.display = 'none';
@@ -1333,25 +1353,37 @@
         // Format date
         function formatDate(dateString) {
             if (!dateString) return 'Date TBD';
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('en-US', options);
+            try {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString('en-US', options);
+            } catch (e) {
+                return 'Date TBD';
+            }
         }
 
         // Format time
         function formatTime(timeString) {
             if (!timeString) return 'TBD';
-            const [hours, minutes] = timeString.split(':');
-            const date = new Date();
-            date.setHours(hours, minutes);
-            return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            try {
+                const [hours, minutes] = timeString.split(':');
+                const date = new Date();
+                date.setHours(hours, minutes);
+                return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            } catch (e) {
+                return 'Time TBD';
+            }
         }
 
         // Check if event is upcoming
         function isUpcoming(eventDate) {
-            if (!eventDate) return false;
-            const eventDateTime = new Date(eventDate);
-            const today = new Date();
-            return eventDateTime >= today;
+            if (!eventDate) return true; // Default to upcoming if no date
+            try {
+                const eventDateTime = new Date(eventDate);
+                const today = new Date();
+                return eventDateTime >= today;
+            } catch (e) {
+                return true;
+            }
         }
 
         // Display tickets based on filter
@@ -1370,25 +1402,22 @@
             let filteredBookings = allBookings;
             
             if (currentFilter === 'upcoming') {
-                filteredBookings = allBookings.filter(booking => 
-                    booking.event && isUpcoming(booking.event.date) && 
-                    (booking.status === 'paid' || booking.paymentStatus === 'completed')
-                );
+                filteredBookings = allBookings.filter(booking => {
+                    const eventDate = booking.eventDate || (booking.event && booking.event.date);
+                    return isUpcoming(eventDate);
+                });
             } else if (currentFilter === 'past') {
-                filteredBookings = allBookings.filter(booking => 
-                    booking.event && !isUpcoming(booking.event.date) &&
-                    (booking.status === 'paid' || booking.paymentStatus === 'completed')
-                );
+                filteredBookings = allBookings.filter(booking => {
+                    const eventDate = booking.eventDate || (booking.event && booking.event.date);
+                    return !isUpcoming(eventDate);
+                });
             } else if (currentFilter === 'free') {
                 filteredBookings = allBookings.filter(booking => 
-                    booking.ticketPrice === 0 &&
-                    (booking.status === 'paid' || booking.paymentStatus === 'completed')
+                    booking.ticketPrice === 0
                 );
             } else {
-                // 'all' - show only paid/completed bookings
-                filteredBookings = allBookings.filter(booking => 
-                    booking.status === 'paid' || booking.paymentStatus === 'completed'
-                );
+                // 'all' - show all paid bookings
+                filteredBookings = allBookings;
             }
             
             // Update count
@@ -1408,16 +1437,19 @@
             // Generate HTML for each booking
             ticketsGrid.innerHTML = filteredBookings.map(booking => {
                 const event = booking.event || {};
-                const eventDate = event.date ? formatDate(event.date) : 'Date TBD';
-                const eventTime = event.startTime ? formatTime(event.startTime) : 'Time TBD';
+                const eventDate = booking.eventDate || event.date || null;
+                const eventTime = event.startTime || null;
+                
+                const formattedDate = formatDate(eventDate);
+                const formattedTime = eventTime ? formatTime(eventTime) : 'Time TBD';
                 const isFree = booking.ticketPrice === 0;
-                const totalAmount = booking.totalAmount || 0;
-                const isEventUpcoming = event.date ? isUpcoming(event.date) : true;
+                const totalAmount = booking.totalAmount || booking.price || 0;
+                const isEventUpcoming = isUpcoming(eventDate);
                 
-                const statusClass = !isEventUpcoming ? 'used' : (isFree ? '' : 'upcoming');
-                const statusText = !isEventUpcoming ? 'PAST EVENT' : (isFree ? 'FREE' : 'CONFIRMED');
+                const statusClass = isEventUpcoming ? 'upcoming' : 'used';
+                const statusText = isEventUpcoming ? 'CONFIRMED' : 'PAST EVENT';
                 
-                const bookingId = 'BME-' + booking.id.slice(0, 6).toUpperCase();
+                const bookingIdShort = booking.bookingCode || 'BME-' + booking.id.slice(0, 6).toUpperCase();
                 
                 return `
                     <div class="ticket-card">
@@ -1427,8 +1459,8 @@
                                 <i class="fas fa-ticket-alt"></i>
                             </div>
                             <div class="ticket-header-info">
-                                <h3>${event.title || 'Unknown Event'}</h3>
-                                <p><i class="fas fa-map-marker-alt"></i> ${event.venueName || event.city || 'Venue TBD'}</p>
+                                <h3>${event.title || booking.eventName || 'Unknown Event'}</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> ${event.venueName || event.city || booking.venue || 'Venue TBD'}</p>
                             </div>
                         </div>
                         
@@ -1437,21 +1469,21 @@
                                 <i class="fas fa-calendar"></i>
                                 <div class="detail-text">
                                     <div class="label">DATE</div>
-                                    <div class="value">${eventDate}</div>
+                                    <div class="value">${formattedDate}</div>
                                 </div>
                             </div>
                             <div class="ticket-detail">
                                 <i class="fas fa-clock"></i>
                                 <div class="detail-text">
                                     <div class="label">TIME</div>
-                                    <div class="value">${eventTime}</div>
+                                    <div class="value">${formattedTime}</div>
                                 </div>
                             </div>
                             <div class="ticket-detail">
                                 <i class="fas fa-hashtag"></i>
                                 <div class="detail-text">
-                                    <div class="label">BOOKING ID</div>
-                                    <div class="value">${bookingId}</div>
+                                    <div class="label">BOOKING CODE</div>
+                                    <div class="value">${bookingIdShort}</div>
                                 </div>
                             </div>
                             <div class="ticket-detail">
@@ -1464,8 +1496,9 @@
                         </div>
                         
                         <div class="qr-section">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${bookingId}-${currentUser.uid}" alt="QR Code">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${bookingIdShort}-${currentUser.uid}" alt="QR Code">
                             <p>Scan for entry</p>
+                            <div class="booking-code">${bookingIdShort}</div>
                         </div>
                         
                         <div class="ticket-footer">
@@ -1506,18 +1539,21 @@
             if (!booking) return;
             
             const event = booking.event || {};
-            const bookingIdShort = 'BME-' + booking.id.slice(0, 6).toUpperCase();
-            const eventDate = event.date ? formatDate(event.date) : 'Date TBD';
-            const eventTime = event.startTime ? formatTime(event.startTime) : 'Time TBD';
+            const bookingIdShort = booking.bookingCode || 'BME-' + booking.id.slice(0, 6).toUpperCase();
+            const eventDate = booking.eventDate || event.date || null;
+            const eventTime = event.startTime || null;
+            const formattedDate = formatDate(eventDate);
+            const formattedTime = eventTime ? formatTime(eventTime) : 'Time TBD';
             const isFree = booking.ticketPrice === 0;
-            const totalAmount = booking.totalAmount || 0;
+            const totalAmount = booking.totalAmount || booking.price || 0;
             
             // Update modal
             modalQR.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${bookingIdShort}-${currentUser.uid}`;
-            modalBookingId.textContent = bookingIdShort;
-            modalEventName.textContent = event.title || 'Unknown Event';
-            modalDateTime.textContent = `${eventDate} - ${eventTime}`;
-            modalVenue.textContent = event.venueName || event.city || 'Venue TBD';
+            modalBookingCode.textContent = bookingIdShort;
+            modalBookingId.textContent = booking.id;
+            modalEventName.textContent = event.title || booking.eventName || 'Unknown Event';
+            modalDateTime.textContent = `${formattedDate} - ${formattedTime}`;
+            modalVenue.textContent = event.venueName || event.city || booking.venue || 'Venue TBD';
             modalQuantity.textContent = `${booking.quantity || 1} Ticket(s)`;
             modalTotal.textContent = isFree ? 'FREE' : `₹${totalAmount}`;
             
@@ -1531,17 +1567,17 @@
             if (!booking) return;
             
             const event = booking.event || {};
-            const bookingIdShort = 'BME-' + booking.id.slice(0, 6).toUpperCase();
+            const bookingIdShort = booking.bookingCode || 'BME-' + booking.id.slice(0, 6).toUpperCase();
             
             if (navigator.share) {
                 navigator.share({
-                    title: `My Ticket for ${event.title}`,
-                    text: `I've booked ${booking.quantity} ticket(s) for ${event.title}! Booking ID: ${bookingIdShort}`,
+                    title: `My Ticket for ${event.title || booking.eventName}`,
+                    text: `I've booked ${booking.quantity} ticket(s) for ${event.title || booking.eventName}! Booking Code: ${bookingIdShort}`,
                     url: window.location.href
                 }).catch(console.error);
             } else {
                 // Fallback
-                prompt('Copy this booking ID:', bookingIdShort);
+                prompt('Copy this booking code:', bookingIdShort);
             }
         };
 
@@ -1569,7 +1605,7 @@
             }
         });
 
-        console.log('%c🎫 BookMyEvent - My Tickets (Real-time)', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
+        console.log('%c🎫 BookMyEvent - My Tickets (Fixed)', 'color: #5B1FA6; font-size: 14px; font-weight: bold;');
     </script>
 </body>
 </html>

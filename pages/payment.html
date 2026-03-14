@@ -579,7 +579,7 @@
     <div class="popup" id="successPopup">
         <div class="popup-content">
             <i class="fas fa-check-circle"></i>
-            <h3>🎉 PAYMENT SUCCESSFUL!</h3>
+            <h3>PAYMENT SUCCESSFUL!</h3>
             <p>Your ticket is ready. You can download it or view in My Tickets.</p>
             <button onclick="closePopup()">GOT IT</button>
         </div>
@@ -758,16 +758,54 @@
             // Simulate payment processing (2 seconds)
             setTimeout(async () => {
                 try {
-                    // Update booking status in Firebase
+                    // Get event details to get event date
+                    let eventDate = null;
+                    if (currentBooking.eventId) {
+                        const eventDoc = await getDoc(doc(db, "events", currentBooking.eventId));
+                        if (eventDoc.exists()) {
+                            const eventData = eventDoc.data();
+                            eventDate = eventData.date || null;
+                        }
+                    }
+                    
+                    // Update booking status in Firebase with all required fields
                     const bookingRef = doc(db, "bookings", bookingId);
-                    await updateDoc(bookingRef, {
+                    const updateData = {
                         status: "paid",
                         paymentStatus: "completed",
-                        paidAt: serverTimestamp()
-                    });
+                        paidAt: serverTimestamp(),
+                        bookingCode: generateBookingCode(),
+                        eventDate: eventDate || currentBooking.eventDate || null
+                    };
                     
-                    // Also update tickets sold in event
-                    // This would be done here if needed
+                    await updateDoc(bookingRef, updateData);
+                    
+                    // Also update user's event history
+                    const userRef = doc(db, "users", auth.currentUser.uid);
+                    const userSnap = await getDoc(userRef);
+                    
+                    if (userSnap.exists()) {
+                        const userData = userSnap.data();
+                        const eventHistory = userData.eventHistory || [];
+                        
+                        // Add to event history
+                        eventHistory.push({
+                            bookingId: bookingId,
+                            eventName: currentBooking.eventName || currentBooking.eventTitle,
+                            eventId: currentBooking.eventId,
+                            ticketPrice: currentBooking.ticketPrice || 0,
+                            quantity: currentBooking.quantity || 1,
+                            totalAmount: currentBooking.price || 0,
+                            bookingDate: new Date().toISOString(),
+                            eventDate: eventDate || currentBooking.eventDate || null,
+                            status: 'completed'
+                        });
+                        
+                        await updateDoc(userRef, {
+                            eventHistory: eventHistory,
+                            updatedAt: serverTimestamp()
+                        });
+                    }
                     
                     // Show success
                     showSuccess();
@@ -783,14 +821,26 @@
             }, 2000);
         };
 
+        // Generate a unique booking code
+        function generateBookingCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = 'BME-';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
         // Show success section
         function showSuccess() {
             paymentSection.style.display = 'none';
             successSection.style.display = 'block';
             
             // Generate QR code with booking info
+            const bookingCode = currentBooking.bookingCode || generateBookingCode();
             const qrData = JSON.stringify({
                 id: bookingId,
+                code: bookingCode,
                 event: currentBooking.eventName || currentBooking.eventTitle,
                 tickets: currentBooking.quantity || 1
             });
@@ -812,10 +862,15 @@
         window.downloadTicket = async function() {
             const { jsPDF } = window.jspdf;
             
+            const bookingCode = currentBooking.bookingCode || generateBookingCode();
+            
             // Create a simple ticket HTML
             const ticketHTML = `
                 <div style="width: 350px; padding: 20px; background: #fff; border: 3px solid #000; text-align: center; font-family: Arial, sans-serif;">
                     <h2 style="color: #5B1FA6; margin-bottom: 10px;">🎫 EVENT TICKET</h2>
+                    <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 2px dashed #000;">
+                        <p style="font-size: 24px; font-weight: bold; letter-spacing: 2px;">${bookingCode}</p>
+                    </div>
                     <img src="${qrCode.src}" style="width: 150px; height: 150px; margin: 10px auto; border: 2px solid #000; padding: 5px;">
                     <p style="font-size: 18px; font-weight: bold; margin: 10px 0;">${currentBooking.eventName || currentBooking.eventTitle}</p>
                     <p style="font-size: 14px; color: #666;">Booking ID: ${bookingId}</p>
@@ -840,7 +895,7 @@
             });
             
             pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-            pdf.save(`ticket_${bookingId}.pdf`);
+            pdf.save(`ticket_${bookingCode}.pdf`);
             
             // Remove temporary div
             document.body.removeChild(tempDiv);
