@@ -1302,7 +1302,6 @@
             where,
             orderBy,
             getDocs,
-            onSnapshot,
             doc,
             getDoc
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -1366,7 +1365,7 @@
         };
 
         // Auth state observer
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 authButtons.style.display = 'none';
@@ -1376,7 +1375,7 @@
                 profileAlert.style.display = 'flex';
                 
                 // Load upcoming event for banner
-                loadUpcomingEvent();
+                await loadUpcomingEvent();
             } else {
                 currentUser = null;
                 authButtons.style.display = 'flex';
@@ -1388,61 +1387,141 @@
         });
 
         // Load upcoming event for banner
-        async function loadUpcomingEvent() {
-            if (!currentUser) return;
+        // Replace the loadUpcomingEvent function in your home page with this debug version:
+
+async function loadUpcomingEvent() {
+    if (!currentUser) return;
+    
+    try {
+        console.log('🔍 Loading upcoming event for user:', currentUser.uid);
+        console.log('User email:', currentUser.email);
+        
+        // First, let's check if we can access the bookings collection at all
+        const bookingsCollection = collection(db, 'bookings');
+        console.log('Bookings collection reference created');
+        
+        // Query for user's paid bookings
+        const bookingsQuery = query(
+            bookingsCollection,
+            where('userId', '==', currentUser.uid),
+            where('status', '==', 'paid')
+        );
+        
+        console.log('Executing query...');
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        console.log('✅ Query successful!');
+        console.log('📊 Found bookings count:', querySnapshot.size);
+        
+        if (querySnapshot.size === 0) {
+            console.log('❌ No paid bookings found for this user');
+            upcomingBanner.style.display = 'none';
+            return;
+        }
+        
+        // Log all bookings for debugging
+        querySnapshot.forEach(doc => {
+            console.log('Booking doc:', doc.id, doc.data());
+        });
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        console.log('Today date (start of day):', today);
+        
+        let foundEvent = null;
+        
+        // Loop through each booking
+        for (const doc of querySnapshot.docs) {
+            const booking = { id: doc.id, ...doc.data() };
+            console.log('🔍 Checking booking:', booking);
             
-            try {
-                // Query for user's paid bookings
-                const bookingsQuery = query(
-                    collection(db, 'bookings'),
-                    where('userId', '==', currentUser.uid),
-                    where('status', '==', 'paid')
-                );
+            if (booking.eventId) {
+                console.log('Booking has eventId:', booking.eventId);
                 
-                const querySnapshot = await getDocs(bookingsQuery);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                let foundEvent = null;
-                
-                for (const doc of querySnapshot.docs) {
-                    const booking = { id: doc.id, ...doc.data() };
+                try {
+                    // Get event details
+                    const eventRef = doc(db, 'events', booking.eventId);
+                    const eventDoc = await getDoc(eventRef);
                     
-                    if (booking.eventId) {
-                        const eventDoc = await getDoc(doc(db, 'events', booking.eventId));
-                        if (eventDoc.exists()) {
-                            const event = eventDoc.data();
-                            const eventDate = new Date(event.date);
-                            
-                            // Check if event is today or future
-                            if (eventDate >= today) {
-                                foundEvent = {
-                                    booking,
-                                    event,
-                                    eventDate
-                                };
-                                break;
-                            }
+                    if (eventDoc.exists()) {
+                        const event = { id: eventDoc.id, ...eventDoc.data() };
+                        console.log('✅ Event found:', event.title);
+                        console.log('Event date from DB:', event.date);
+                        
+                        // Parse event date
+                        const eventDate = new Date(event.date);
+                        console.log('Parsed event date:', eventDate);
+                        console.log('Is event today or future?', eventDate >= today);
+                        
+                        // Check if event is today or future (including today)
+                        if (eventDate >= today) {
+                            console.log('🎯 Found matching event for banner:', event.title);
+                            foundEvent = {
+                                booking,
+                                event,
+                                eventDate
+                            };
+                            break;
+                        } else {
+                            console.log('⏰ Event is in the past:', eventDate);
                         }
+                    } else {
+                        console.log('❌ Event document does not exist for ID:', booking.eventId);
                     }
+                } catch (error) {
+                    console.error('❌ Error fetching event:', error);
                 }
-                
-                if (foundEvent) {
-                    upcomingEvent = foundEvent;
-                    showUpcomingBanner();
-                } else {
-                    upcomingBanner.style.display = 'none';
-                }
-                
-            } catch (error) {
-                console.error('Error loading upcoming event:', error);
-                upcomingBanner.style.display = 'none';
+            } else {
+                console.log('⚠️ Booking has no eventId');
             }
         }
+        
+        if (foundEvent) {
+            upcomingEvent = foundEvent;
+            console.log('✅ Showing banner for event:', foundEvent.event.title);
+            showUpcomingBanner();
+        } else {
+            console.log('❌ No upcoming events found for banner');
+            upcomingBanner.style.display = 'none';
+        }
+        
+    } catch (error) {
+        console.error('❌ CRITICAL ERROR in loadUpcomingEvent:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        
+        // Check for permission errors
+        if (error.code === 'permission-denied') {
+            console.log('🔥 This is a Firebase Rules permission error!');
+            console.log('Please update your Firebase rules as shown above.');
+            
+            // Show a temporary message on the page for debugging
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'fixed';
+            tempDiv.style.top = '10px';
+            tempDiv.style.left = '10px';
+            tempDiv.style.right = '10px';
+            tempDiv.style.background = 'red';
+            tempDiv.style.color = 'white';
+            tempDiv.style.padding = '20px';
+            tempDiv.style.zIndex = '9999';
+            tempDiv.style.border = '3px solid black';
+            tempDiv.style.borderRadius = '10px';
+            tempDiv.innerHTML = '🔥 FIREBASE RULES ERROR: Please update rules to allow querying by userId';
+            document.body.appendChild(tempDiv);
+            
+            setTimeout(() => tempDiv.remove(), 10000);
+        }
+        
+        upcomingBanner.style.display = 'none';
+    }
+}
 
         // Show upcoming banner
         function showUpcomingBanner() {
             if (!upcomingEvent) return;
+            
+            console.log('Showing banner for event:', upcomingEvent.event.title);
             
             const userName = currentUser.displayName?.split(' ')[0] || 'FAN';
             bannerTitle.textContent = `ARE YOU READY, ${userName}?`;
@@ -1454,6 +1533,19 @@
             
             upcomingBanner.style.display = 'flex';
             startCountdown(upcomingEvent.eventDate);
+        }
+
+        // Format time function
+        function formatTime(timeString) {
+            if (!timeString) return '7:00 PM';
+            try {
+                const [hours, minutes] = timeString.split(':');
+                const date = new Date();
+                date.setHours(hours, minutes);
+                return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            } catch (e) {
+                return '7:00 PM';
+            }
         }
 
         // Start countdown
@@ -1515,14 +1607,6 @@
         const formatDate = (dateString) => {
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        };
-
-        const formatTime = (timeString) => {
-            if (!timeString) return '7:00 PM';
-            const [hours, minutes] = timeString.split(':');
-            const date = new Date();
-            date.setHours(hours, minutes);
-            return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
         };
 
         const isToday = (dateString) => {
