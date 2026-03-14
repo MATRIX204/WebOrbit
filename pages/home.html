@@ -218,6 +218,150 @@
             font-size: 1rem;
         }
 
+        /* Upcoming Event Banner - Green Panel */
+        .upcoming-banner {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: 4px solid #000;
+            padding: 20px 30px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.2);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .upcoming-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .banner-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .banner-icon {
+            width: 60px;
+            height: 60px;
+            background: #FFD700;
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #000;
+            box-shadow: 5px 5px 0 #000;
+            transform: rotate(-5deg);
+            border-radius: 15px;
+        }
+
+        .banner-text {
+            color: #000;
+        }
+
+        .banner-text h3 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 5px;
+            color: #000;
+            text-shadow: 2px 2px 0 rgba(255,255,255,0.3);
+        }
+
+        .banner-text p {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            color: #000;
+        }
+
+        .countdown-timer {
+            display: flex;
+            gap: 10px;
+            font-weight: 900;
+        }
+
+        .timer-block {
+            background: #000;
+            color: #FFFFFF;
+            padding: 8px 12px;
+            border-radius: 8px;
+            min-width: 70px;
+            text-align: center;
+            box-shadow: 3px 3px 0 #FFD700;
+        }
+
+        .timer-block .number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .timer-block .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .event-ended-badge {
+            background: #dc3545;
+            color: #FFFFFF;
+            padding: 5px 15px;
+            border: 2px solid #000;
+            font-weight: 800;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            box-shadow: 3px 3px 0 #000;
+            transform: rotate(2deg);
+        }
+
+        .view-ticket-btn {
+            padding: 12px 25px;
+            background: #FFD700;
+            border: 3px solid #000;
+            font-weight: 800;
+            font-size: 1rem;
+            text-decoration: none;
+            color: #000;
+            box-shadow: 5px 5px 0 #000;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 10px;
+        }
+
+        .view-ticket-btn:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
         /* Banner Slider */
         .banner-slider {
             position: relative;
@@ -748,6 +892,30 @@
             font-size: 1rem;
         }
 
+        /* Host Event Button - New */
+        .host-event-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #FFD700;
+            border: 2px solid #000;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: #000;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .host-event-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            background: #FFFFFF;
+        }
+
         .footer-bottom {
             text-align: center;
             padding-top: 20px;
@@ -811,6 +979,28 @@
             .dialog-btn {
                 width: 100%;
             }
+
+            .upcoming-banner {
+                padding: 15px;
+            }
+
+            .banner-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .countdown-timer {
+                justify-content: center;
+            }
+
+            .timer-block {
+                min-width: 60px;
+            }
+
+            .view-ticket-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         @media (min-width: 481px) and (max-width: 768px) {
@@ -856,12 +1046,12 @@
         <div class="content">
             <!-- Header -->
             <div class="header">
-                <h1>
-          
-                    <span class="highlight">BOOKMYEVENT</span>
-                </h1>
+                <div class="logo-text">
+                    <span class="book">BOOK</span>
+                    <span class="my">MY</span>
+                    <span class="event">EVENT</span>
+                </div>
 
-                
                 <!-- Auth Buttons -->
                 <div class="auth-buttons" id="authButtons">
                     <a href="login.html" class="btn-login">
@@ -891,14 +1081,51 @@
                             <i class="fas fa-ticket-alt"></i>
                             <span>My Tickets</span>
                         </div>
-                        
-                        
                         <div class="dropdown-item" onclick="logout()">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Upcoming Event Banner - Green Panel -->
+            <div id="upcomingBanner" class="upcoming-banner" style="display: none;">
+                <div class="banner-content">
+                    <div class="banner-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="banner-text">
+                        <h3 id="bannerTitle">ARE YOU READY?</h3>
+                        <p>
+                            <span id="bannerEventInfo"></span>
+                            <span class="countdown-timer" id="countdownTimer">
+                                <span class="timer-block">
+                                    <span class="number" id="days">00</span>
+                                    <span class="label">DAYS</span>
+                                </span>
+                                <span class="timer-block">
+                                    <span class="number" id="hours">00</span>
+                                    <span class="label">HOURS</span>
+                                </span>
+                                <span class="timer-block">
+                                    <span class="number" id="minutes">00</span>
+                                    <span class="label">MINS</span>
+                                </span>
+                                <span class="timer-block">
+                                    <span class="number" id="seconds">00</span>
+                                    <span class="label">SECS</span>
+                                </span>
+                            </span>
+                            <span id="eventEndedBadge" class="event-ended-badge" style="display: none;">
+                                <i class="fas fa-check-circle"></i> EVENT ENDED
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <a href="my-tickets.html" class="view-ticket-btn" id="viewTicketBtn">
+                    <i class="fas fa-ticket-alt"></i> VIEW TICKET
+                </a>
             </div>
 
             <!-- Banner Slider -->
@@ -1032,6 +1259,10 @@
                             <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
                             <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
                         </ul>
+                        <!-- Host Your Event Button -->
+                        <a href="event-info.html" class="host-event-btn">
+                            <i class="fas fa-plus-circle"></i> YOUR EVENT
+                        </a>
                     </div>
                 </div>
                 
@@ -1070,7 +1301,10 @@
             query,
             where,
             orderBy,
-            getDocs
+            getDocs,
+            onSnapshot,
+            doc,
+            getDoc
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -1079,8 +1313,7 @@
             projectId: "bookmyevent-21cd8",
             storageBucket: "bookmyevent-21cd8.firebasestorage.app",
             messagingSenderId: "535972128829",
-            appId: "1:535972128829:web:d07360b589ad13a8dfe254",
-            measurementId: "G-R0DF8W0N81"
+            appId: "1:535972128829:web:d07360b589ad13a8dfe254"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -1100,8 +1333,22 @@
         const todayEventsGrid = document.getElementById('todayEventsGrid');
         const topEventsGrid = document.getElementById('topEventsGrid');
         const freeEventsGrid = document.getElementById('freeEventsGrid');
+        
+        // Banner elements
+        const upcomingBanner = document.getElementById('upcomingBanner');
+        const bannerTitle = document.getElementById('bannerTitle');
+        const bannerEventInfo = document.getElementById('bannerEventInfo');
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const countdownTimer = document.getElementById('countdownTimer');
+        const eventEndedBadge = document.getElementById('eventEndedBadge');
+        const viewTicketBtn = document.getElementById('viewTicketBtn');
 
         let currentUser = null;
+        let upcomingEvent = null;
+        let countdownInterval = null;
 
         // Category images mapping
         const categoryImages = {
@@ -1127,14 +1374,116 @@
                 dropdownUserName.textContent = user.displayName || 'Event Lover';
                 dropdownUserEmail.textContent = user.email;
                 profileAlert.style.display = 'flex';
+                
+                // Load upcoming event for banner
+                loadUpcomingEvent();
             } else {
                 currentUser = null;
                 authButtons.style.display = 'flex';
                 userMenu.style.display = 'none';
                 profileAlert.style.display = 'none';
+                upcomingBanner.style.display = 'none';
             }
             loadAllEvents();
         });
+
+        // Load upcoming event for banner
+        async function loadUpcomingEvent() {
+            if (!currentUser) return;
+            
+            try {
+                // Query for user's paid bookings
+                const bookingsQuery = query(
+                    collection(db, 'bookings'),
+                    where('userId', '==', currentUser.uid),
+                    where('status', '==', 'paid')
+                );
+                
+                const querySnapshot = await getDocs(bookingsQuery);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                let foundEvent = null;
+                
+                for (const doc of querySnapshot.docs) {
+                    const booking = { id: doc.id, ...doc.data() };
+                    
+                    if (booking.eventId) {
+                        const eventDoc = await getDoc(doc(db, 'events', booking.eventId));
+                        if (eventDoc.exists()) {
+                            const event = eventDoc.data();
+                            const eventDate = new Date(event.date);
+                            
+                            // Check if event is today or future
+                            if (eventDate >= today) {
+                                foundEvent = {
+                                    booking,
+                                    event,
+                                    eventDate
+                                };
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (foundEvent) {
+                    upcomingEvent = foundEvent;
+                    showUpcomingBanner();
+                } else {
+                    upcomingBanner.style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error('Error loading upcoming event:', error);
+                upcomingBanner.style.display = 'none';
+            }
+        }
+
+        // Show upcoming banner
+        function showUpcomingBanner() {
+            if (!upcomingEvent) return;
+            
+            const userName = currentUser.displayName?.split(' ')[0] || 'FAN';
+            bannerTitle.textContent = `ARE YOU READY, ${userName}?`;
+            
+            const eventTime = upcomingEvent.event.startTime ? 
+                formatTime(upcomingEvent.event.startTime) : '7:00 PM';
+            
+            bannerEventInfo.innerHTML = `<strong>${upcomingEvent.event.title}</strong> at ${eventTime}`;
+            
+            upcomingBanner.style.display = 'flex';
+            startCountdown(upcomingEvent.eventDate);
+        }
+
+        // Start countdown
+        function startCountdown(eventDate) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = eventDate.getTime() - now;
+                
+                if (distance < 0) {
+                    // Event ended
+                    countdownTimer.style.display = 'none';
+                    eventEndedBadge.style.display = 'inline-block';
+                    viewTicketBtn.innerHTML = '<i class="fas fa-history"></i> VIEW PAST TICKET';
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                daysEl.textContent = days.toString().padStart(2, '0');
+                hoursEl.textContent = hours.toString().padStart(2, '0');
+                minutesEl.textContent = minutes.toString().padStart(2, '0');
+                secondsEl.textContent = seconds.toString().padStart(2, '0');
+            }, 1000);
+        }
 
         // Toggle dropdown
         userMenuBtn.addEventListener('click', (e) => {
@@ -1166,6 +1515,14 @@
         const formatDate = (dateString) => {
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        };
+
+        const formatTime = (timeString) => {
+            if (!timeString) return '7:00 PM';
+            const [hours, minutes] = timeString.split(':');
+            const date = new Date();
+            date.setHours(hours, minutes);
+            return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
         };
 
         const isToday = (dateString) => {
@@ -1310,7 +1667,7 @@
 
         slideInterval = setInterval(nextSlide, 6000);
 
-        console.log('🏠 BookMyEvent - Home Page Ready');
+        console.log('🏠 BookMyEvent - Home Page Ready with Green Panel');
     </script>
 </body>
 </html>
