@@ -483,14 +483,35 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-clock"></i> START TIME *</label>
+                        <label class="form-label"><i class="fas fa-clock"></i> EVENT START TIME *</label>
                         <input type="time" class="form-input" id="startTime" required>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-clock"></i> END TIME *</label>
+                        <label class="form-label"><i class="fas fa-clock"></i> EVENT END TIME *</label>
                         <input type="time" class="form-input" id="endTime" required>
                     </div>
+                </div>
+
+                <div class="section-header">
+                    <i class="fas fa-clock"></i> EVENT SESSIONS
+                </div>
+                <label class="form-label">Session 1</label>
+                <div class="form-grid">
+                    <input type="text" class="form-input" id="tags" placeholder=" session start time - session end time">
+                    <input type="text" class="form-input" id="tags" placeholder=" session name">
+                    
+
+                </div>
+                <label class="form-label">Session 2</label>
+                <div class="form-grid">
+                    <input type="text" class="form-input" id="tags" placeholder=" session start time - session end time">
+                    <input type="text" class="form-input" id="tags" placeholder=" session name">
+                </div>
+                <label class="form-label">Session 3</label>
+                <div class="form-grid">
+                    <input type="text" class="form-input" id="tags" placeholder=" session start time - session end time">
+                    <input type="text" class="form-input" id="tags" placeholder=" session name">
                 </div>
 
                 <!-- Location -->
@@ -571,6 +592,17 @@
                     <div class="form-group">
                         <label class="form-label"><i class="fas fa-phone"></i> ORGANIZER PHONE *</label>
                         <input type="tel" class="form-input" id="organizerPhone" placeholder="e.g., +91 9876543210" required>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <i class="fas fa-gavel"></i> EVENT SPEAKER
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label"><i class="fas fa-rules"></i> EVENT SPEAKER DETAILS*</label>
+                        <textarea class="form-textarea" id="eventSpeaker" placeholder="Speaker name - topic " required></textarea>
                     </div>
                 </div>
 
